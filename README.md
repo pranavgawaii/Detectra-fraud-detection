@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="public/banner.png" alt="Detectra Banner" width="100%">
-
-# ✨ Detectra | Next-Gen Fraud Intelligence
+# Detectra | Next-Gen Fraud Intelligence
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
@@ -18,26 +16,18 @@ Empowering investigation units to surface 47+ fraud signals instantly, saving th
 
 ---
 
-## 📸 Preview
+## Key Features
 
-<div align="center">
-  <img src="public/preview.png" alt="Dashboard Preview" width="85%" style="border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 40px 100px rgba(0,0,0,0.5);">
-</div>
-
----
-
-## ⚡ Key Features
-
-- **🚀 AI Verdict Cards**: Instant 0–100 risk scoring with natural language explanations.
-- **🛡️ 47+ Fraud Signals**: Deep analysis of claim amounts, narrative consistency, geo-spatial risk, and network anomalies.
-- **⚙️ Dynamic Rules Engine**: Custom logical flows for automated triage (No-Code required).
-- **👥 Team Workspaces**: Escalate to SIU, mark as safe, or request documentation with one-click actions.
-- **📊 Real-time Analytics**: High-fidelity dashboarding for monitoring fraud trends and averted losses.
-- **💎 Premium Dark UI**: Meticulously crafted for elite investigation teams with the 'Emerald' theme.
+- **AI Verdict Cards**: Instant 0–100 risk scoring with natural language explanations.
+- **47+ Fraud Signals**: Deep analysis of claim amounts, narrative consistency, geo-spatial risk, and network anomalies.
+- **Dynamic Rules Engine**: Custom logical flows for automated triage (No-Code required).
+- **Team Workspaces**: Escalate to SIU, mark as safe, or request documentation with one-click actions.
+- **Real-time Analytics**: High-fidelity dashboarding for monitoring fraud trends and averted losses.
+- **Premium Dark UI**: Meticulously crafted for elite investigation teams with the 'Emerald' theme.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 Built with a modern, high-performance stack for security and speed:
 
@@ -51,7 +41,7 @@ Built with a modern, high-performance stack for security and speed:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```bash
 ├── src/
@@ -69,7 +59,7 @@ Built with a modern, high-performance stack for security and speed:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -80,7 +70,7 @@ Built with a modern, high-performance stack for security and speed:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/detectra.git
+   git clone https://github.com/pranavgawaii/Detectra-fraud-detection.git
    cd detectra
    ```
 
@@ -101,7 +91,7 @@ Built with a modern, high-performance stack for security and speed:
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
