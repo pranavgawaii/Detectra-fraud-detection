@@ -43,18 +43,17 @@ Built with a modern, high-performance stack for security and speed:
 
 ## Project Structure
 
+Detectra is organized as a monorepo for clear separation of concerns between our fraud detection engine and the high-performance investigation dashboard.
+
 ```bash
-├── src/
-│   ├── app/           # Next.js App Router (Pages & Routes)
-│   ├── components/    # Reusable UI & Layout Components
-│   │   ├── dashboard/ # Dashboard-specific views
-│   │   ├── layout/    # App shell, Sidebar, Header
-│   │   └── ui/        # Shared UI Primitives (Card, Badge, etc.)
-│   ├── data/          # Mock datasets & static content
-│   ├── lib/           # Utility functions & Brand config
-│   └── providers/     # Theme & Chat Context providers
-├── public/            # Assets, Icons, and README media
-└── root/              # Config files (Tailwind, TypeScript, ESLint)
+├── frontend/          # Next.js 14 Dashboard Application
+│   ├── src/           # Dashboard Pages, Components, and Logic
+│   ├── public/        # Icons, Branding, and Media
+│   └── root/          # Frontend Config (Tailwind, Next, TS)
+├── backend/           # Node.js / Express Fraud Detection API
+│   ├── server.js      # API Entry Point
+│   └── package.json   # Backend Dependencies
+└── root/              # Global configuration & orchestration
 ```
 
 ---
@@ -66,28 +65,29 @@ Built with a modern, high-performance stack for security and speed:
 - Node.js 18.0 or later
 - npm / yarn / pnpm
 
-### Installation
+### Quick Start (All Services)
 
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/pranavgawaii/Detectra-fraud-detection.git
-   cd detectra
+   cd Detectra
    ```
 
-2. **Install Dependencies**
+2. **Install All Dependencies**
    ```bash
-   npm install
+   npm run install:all
    ```
 
-3. **Start Development Server**
+3. **Start Development (Frontend & Backend)**
    ```bash
    npm run dev
    ```
 
-4. **Build for Production**
-   ```bash
-   npm run build
-   ```
+### Independent Service Control
+
+- **Frontend Only**: `npm run dev:frontend`
+- **Backend Only**: `npm run dev:backend`
+- **Build Frontend**: `npm run build:frontend`
 
 ---
 
