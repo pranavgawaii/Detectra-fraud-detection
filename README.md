@@ -9,7 +9,6 @@
 [![IRDAI Compliant](https://img.shields.io/badge/Compliance-IRDAI-success?style=for-the-badge&logo=shield&logoColor=white)](https://detectra.io)
 [![Enterprise Ready](https://img.shields.io/badge/Security-SOC2_Type_II-blue?style=for-the-badge&logo=lock&logoColor=white)](https://detectra.io)
 
-[Explore Documentation](https://docs.detectra.io) · [View Demo](https://detectra.io/demo) · [API Reference](https://api.detectra.io)
 
 </div>
 
