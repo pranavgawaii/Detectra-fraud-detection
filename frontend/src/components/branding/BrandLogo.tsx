@@ -53,49 +53,37 @@ export default function BrandLogo({
 
   const content = (
     <>
-      <div className={["relative flex items-center justify-center shrink-0 overflow-hidden rounded-xl border transition-all duration-300", 
-        config.mark,
-        tone === "light" ? "bg-white/40 border-black/5" : "bg-white/5 border-white/10"
-      ].join(" ")}
-      style={{
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-      }}>
-        <div className="relative h-[70%] w-[70%]">
-          <Image
-            src={BRAND.markSrc}
-            alt={`${BRAND.name} logo`}
-            fill
-            sizes={size === "lg" ? "40px" : size === "md" ? "32px" : "28px"}
-            priority={priority}
-            className="object-contain filter brightness-110"
-          />
-        </div>
-        {/* Subtle inner glow for premium feel */}
-        <div className="absolute inset-0 pointer-events-none rounded-xl ring-1 ring-inset ring-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]" />
-      </div>
-
+      <span className={["relative block shrink-0", config.mark].join(" ")}>
+        <Image
+          src={BRAND.markSrc}
+          alt={`${BRAND.name} logo`}
+          fill
+          sizes={size === "lg" ? "56px" : size === "md" ? "48px" : "40px"}
+          priority={priority}
+          className="object-contain"
+        />
+      </span>
       {showName ? (
         <span
           className={[
-            "font-bold tracking-[-0.03em] font-sans",
+            "font-black tracking-[-0.01em] font-sans",
             config.label,
             labelClassName ?? "",
           ].join(" ")}
           style={{ 
             ...theme.labelStyle,
-            lineHeight: '1',
-            letterSpacing: '-0.04em'
+            letterSpacing: '-0.3px',
+            lineHeight: '1.1'
           }}
         >
-          {BRAND.name}
+          <span className="text-[1.1em]">D</span>etectra
         </span>
       ) : null}
     </>
   );
 
   const rootClassName = [
-    "inline-flex items-center no-underline active:scale-95 transition-transform",
+    "inline-flex items-center no-underline",
     config.gap,
     className ?? "",
   ].join(" ");
