@@ -212,3 +212,21 @@ dark .landing-nav {
 .sidebar-text-enter {
   animation: sidebar-fade-in 0.2s ease forwards;
 }
+
+@keyframes beam-x {
+0% { transform: translateX(-100%); opacity: 0; }
+50% { opacity: 1; }
+100% { transform: translateX(100%); opacity: 0; }
+}
+@keyframes beam-y {
+0% { transform: translateY(-100%); opacity: 0; }
+50% { opacity: 1; }
+100% { transform: translateY(100%); opacity: 0; }
+}
+.animate-beam-x { animation: beam-x 2.5s infinite linear; }
+.animate-beam-y { animation: beam-y 2.5s infinite linear; }
+.mask-fade-y { mask-image: linear-gradient(to bottom, black 50%, transparent 100%); }
+.mask-fade-x { mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%); }
+.mask-radial { mask-image: radial-gradient(circle at center, black 30%, transparent 70%); }
+.mask-hero-grid { mask-image: radial-gradient(ellipse at center 0%, black 40%, transparent 100%); }
+.mask-waves { mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%); }
