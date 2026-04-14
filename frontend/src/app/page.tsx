@@ -1,34 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import BrandLogo from "@/components/branding/BrandLogo";
-import DashboardMockup from "@/components/dashboard/DashboardMockup";
+import { motion, AnimatePresence } from "motion/react";
+import { DetectionEngineEffect } from "@/components/ui/detection-engine-effect";
 import {
-  ShieldAlert, ArrowRight, CheckCircle2,
-  Zap, Activity, ShieldCheck, BarChart2, Users, Code2,
-  Star, TrendingUp, Lock, Globe, Sparkles, Eye,
+  TriangleAlert, ArrowRight, Activity, BarChart,
+  Lock, Globe, Sparkles, Play, Search, Eye,
+  Database, Server, Cpu, Zap, HeartPulse, FileWarning, Fingerprint, RefreshCw, Code2, CircleCheck, Clock, Stethoscope, FileText, CircleCheckBig, Brain, User, CheckCircle2, BrainCircuit, UserCheck
 } from "lucide-react";
-import { 
-  navLinks, 
-  features, 
-  steps, 
-  testimonials, 
-  pricing, 
-  stats, 
-  companies 
-} from "@/data/landing";
+import { HeroSection } from "@/components/blocks/hero-section-1";
 
-const iconMap: Record<string, React.ReactNode> = {
-  Zap: <Zap size={20} />,
-  Activity: <Activity size={20} />,
-  ShieldCheck: <ShieldCheck size={20} />,
-  BarChart2: <BarChart2 size={20} />,
-  Users: <Users size={20} />,
-  Code2: <Code2 size={20} />,
+// --- Animated Risk Gauge ---
+const RiskGauge = ({ targetScore = 84, size = 180 }: { targetScore?: number, size?: number }) => {
+  const [score, setScore] = useState(0);
+  
+  useEffect(() => {
+    const duration = 1500;
+    const startTime = performance.now();
+    let frameId: number;
+    
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setScore(Math.floor(easeProgress * targetScore));
+      if (progress < 1) frameId = requestAnimationFrame(animate);
+    };
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [targetScore]);
+
+  const radius = size * 0.4;
+  const circum = 2 * Math.PI * radius;
+  const strokeDashoffset = circum - (score / 100) * circum;
+  const color = score > 75 ? "#ef4444" : score > 40 ? "#f59e0b" : "#ffffff";
+
+  return (
+    <div className="relative flex items-center justify-center font-sans drop-shadow-xl" style={{ width: size, height: size }}>
+      <svg className="absolute inset-0 w-full h-full -rotate-90">
+        <circle cx="50%" cy="50%" r={radius} fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth={size * 0.08} />
+        <circle 
+          cx="50%" cy="50%" r={radius} fill="transparent" 
+          stroke={color} 
+          strokeWidth={size * 0.08} 
+          strokeDasharray={circum}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          className="transition-all duration-300 ease-out"
+        />
+        <circle 
+          cx="50%" cy="50%" r={radius} fill="transparent" 
+          stroke={color} 
+          strokeWidth={size * 0.08} 
+          strokeDasharray={circum}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          className="transition-all duration-300 ease-out opacity-40 blur-md"
+        />
+      </svg>
+      <div className="flex flex-col items-center">
+        <span className="font-extrabold text-white tracking-tighter" style={{ fontSize: size * 0.35, lineHeight: 1 }}>
+          {score}
+        </span>
+      </div>
+    </div>
+  );
 };
 
-/* ─── Page ──────────────────────────────────────── */
+// --- Main Page ---
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -38,446 +79,336 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", h);
   }, []);
 
+  const [simState, setSimState] = useState<"idle" | "analyzing" | "complete">("idle");
+
+  const runSimulation = () => {
+    setSimState("analyzing");
+    setTimeout(() => {
+      setSimState("complete");
+    }, 1500);
+  };
+
   return (
-    <div style={{ background: "#0d0d11", minHeight: "100vh", color: "#e8e8e8", fontFamily: "var(--font-sans)" }}>
+    <div className="bg-[#0A0A0A] min-h-screen text-white font-sans selection:bg-white/10 flex flex-col">
+      {/* ══ NAV DELEGATED TO HERO_SECTION ═══════════════ */}
 
-      {/* ══ NAV ═════════════════════════════════════════ */}
-      <header
-        className="sticky top-0 z-50 transition-all"
-        style={{
-          background: scrolled ? "rgba(13,13,17,0.92)" : "rgba(13,13,17,0.7)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-        }}
-      >
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-8 px-6">
-          <BrandLogo href="/" size="sm" priority />
-
-          <nav className="hidden flex-1 items-center gap-1 md:flex">
-            {navLinks.map(l => (
-              <a key={l.label} href={l.href}
-                className="rounded-lg px-3 py-1.5 text-[0.84rem] font-medium transition-all"
-                style={{ color: "rgba(255,255,255,0.55)" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
-              >
-                {l.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2.5">
-            <Link href="/login"
-              className="hidden rounded-xl border px-4 py-2 text-[0.82rem] font-semibold transition-all hover:border-white/20 sm:block"
-              style={{ borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
-            >
-              Sign In
-            </Link>
-            <Link href="/dashboard"
-              className="flex items-center gap-2 rounded-xl px-4 py-2 text-[0.82rem] font-bold transition-all hover:opacity-90 active:scale-95"
-              style={{ background: "#72e3ad", color: "#0a1a10" }}
-            >
-              Get Started <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* ══ HERO ════════════════════════════════════════ */}
-      <section className="relative overflow-hidden pt-28 pb-32 px-6">
-        {/* Background glow orbs */}
-        <div className="pointer-events-none absolute left-1/4 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/4 rounded-full opacity-10"
-          style={{ background: "#72e3ad", filter: "blur(100px)" }} />
-        <div className="pointer-events-none absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 translate-x-1/4 rounded-full opacity-8"
-          style={{ background: "#3b82f6", filter: "blur(80px)" }} />
-
-        <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-16 lg:grid-cols-2">
-          {/* Left: text */}
-          <div className="fade-up-1">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[0.72rem] font-semibold"
-              style={{ background: "rgba(114,227,173,0.08)", borderColor: "rgba(114,227,173,0.25)", color: "#72e3ad" }}>
-              <div className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#72e3ad" }} />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: "#72e3ad" }} />
+      {/* ══ HERO SECTION ═══════════════════════════════ */}
+      <HeroSection dashboardNode={
+        <div className="rounded-[12px] overflow-hidden bg-[#0A0A0A] relative grid grid-cols-1 md:grid-cols-3 gap-px h-[400px] ring-1 ring-white/10 ring-inset">
+          {/* Sidebar Profile Mock */}
+          <div className="col-span-1 border-r border-white/5 bg-[#0a0a0d] p-8 flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+            <h3 className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-6 border border-white/10 px-3 py-1 rounded-full">Active Claim Review</h3>
+            <RiskGauge targetScore={84} size={150} />
+            <div className="mt-8 space-y-3 w-full px-4">
+              <div className="flex justify-between text-xs font-medium"><span className="text-white/40">Anomaly</span><span className="text-red-400">92%</span></div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-red-500 rounded-full" style={{ width: '92%' }} />
               </div>
-              Next-Gen Fraud Intelligence
+              <div className="flex justify-between text-xs font-medium pt-2"><span className="text-white/40">Network Risk</span><span className="text-amber-400">65%</span></div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-400 rounded-full" style={{ width: '65%' }} />
+              </div>
+            </div>
+          </div>
+          
+          {/* Main Feed Mock */}
+          <div className="col-span-2 bg-[#0a0a0e] p-8 flex flex-col relative z-20">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex gap-3">
+                <div className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
+                  <Stethoscope size={18} className="text-white/60" />
+                </div>
+                <div>
+                  <h4 className="text-white/90 font-medium text-sm">Orthopedic Procedure Claim</h4>
+                  <p className="text-white/40 text-xs mt-0.5">Apollo Hospitals • ID: #CLM-9231A</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <h4 className="text-white font-medium">₹ 2,45,000</h4>
+                <p className="text-red-400 text-xs mt-0.5 font-medium">+42% vs regional avg</p>
+              </div>
             </div>
 
-            <h1 className="mb-6 text-[3.5rem] font-extrabold leading-[1.0] tracking-[-0.03em]"
-              style={{ color: "#fff" }}>
-              The Gold Standard<br />
-              <span style={{ color: "#72e3ad" }}>In Fraud Detection.</span>
-            </h1>
-
-            <p className="mb-10 max-w-[500px] text-[1.05rem] leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.5)" }}>
-              Empowering top-tier insurers with sub-second risk verdicts. Our neural engine surfaces
-              47+ fraud signals instantly, saving your team hours of manual triage.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <Link href="/sign-up"
-                className="group flex items-center gap-2.5 rounded-2xl px-8 py-4 text-[0.95rem] font-bold transition-all hover:shadow-[0_0_40px_rgba(114,227,173,0.35)] hover:scale-[1.02]"
-                style={{ background: "#72e3ad", color: "#0a1a10" }}>
-                Start Free Trial
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link href="/dashboard"
-                className="flex items-center gap-2.5 rounded-2xl border px-8 py-4 text-[0.95rem] font-semibold transition-all hover:border-white/30"
-                style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.7)" }}>
-                <Eye size={17} /> Live Preview
-              </Link>
-            </div>
-
-            <div className="mt-10 flex items-center gap-10 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-              {["IRDAI COMPLIANT", "SOC 2 TYPE II", "ISO 27001"].map(b => (
-                <span key={b} className="text-[0.6rem] font-black tracking-[0.2em]"
-                  style={{ color: "#fff" }}>
-                  {b}
-                </span>
+            <h5 className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-4">Top AI Risk Signals (SHAP)</h5>
+            <div className="flex flex-col gap-3 flex-1">
+              {[ 
+                { name: "Upcoding Detected: Knee Replacement Code discrepancy", val: "+34%" },
+                { name: "Phantom Provider: Doctor NPI inactive since 2024", val: "+28%" },
+                { name: "Geolocation Mismatch: IP originates outside India", val: "+19%" }
+              ].map((sig, i) => (
+                <div key={i} className="flex items-center justify-between p-3.5 rounded-xl border border-red-500/10 bg-red-500/[0.02]">
+                   <div className="flex items-center gap-3">
+                     <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                     <span className="text-white/80 text-sm">{sig.name}</span>
+                   </div>
+                   <span className="text-red-400 font-medium text-sm font-mono">{sig.val}</span>
+                </div>
               ))}
             </div>
           </div>
+        </div>
+      } />
 
-          {/* Right: mockup */}
-          <div className="relative hidden lg:block">
-            <DashboardMockup />
-
-            {/* Floating alert card */}
-            <div
-              className="absolute -bottom-8 -left-12 rounded-2xl p-4 animate-in slide-in-from-left-8 duration-700 delay-300 fill-mode-both"
-              style={{
-                background: "linear-gradient(145deg,#0f1e3c,#162d56)",
-                border: "1px solid rgba(114,227,173,0.2)",
-                boxShadow: "0 24px 48px rgba(0,0,0,0.4)",
-                width: 240,
-              }}
-            >
-              <div className="flex items-center gap-3 mb-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl"
-                  style={{ background: "rgba(239,68,68,0.15)" }}>
-                  <ShieldAlert size={16} style={{ color: "#ef4444" }} />
-                </div>
-                <div>
-                  <p className="text-[0.6rem] font-black uppercase tracking-widest" style={{ color: "#ef4444" }}>High Risk</p>
-                  <p className="text-[0.78rem] font-bold text-white">Claim #CLM-20948</p>
-                </div>
-              </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.08)" }}>
-                <div className="h-full rounded-full" style={{ width: "94%", background: "#ef4444" }} />
-              </div>
-              <p className="mt-1.5 text-[0.62rem]" style={{ color: "#94a3b8" }}>94% Probability of Fraud</p>
+      {/* ══ PROBLEM SECTION ══════════════════════════════ */}
+      <section className="py-24 px-6 border-y border-white/5 relative bg-[#020614]">
+        <div className="mx-auto max-w-[1000px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <div className="p-8 rounded-2xl border border-white/5 bg-white/[0.01]">
+               <h3 className="text-4xl font-semibold text-white mb-2">₹30,401 Cr</h3>
+               <p className="text-white/50 text-sm">Annual loss in the Indian health insurance sector due to systemic fraud.</p>
+            </div>
+            <div className="p-8 rounded-2xl border border-white/5 bg-white/[0.01]">
+               <h3 className="text-4xl font-semibold text-white mb-2">8.5%</h3>
+               <p className="text-white/50 text-sm">Of gross written premiums are completely siphoned by fraudulent syndicates.</p>
+            </div>
+            <div className="p-8 rounded-2xl border border-white/5 bg-white/[0.01]">
+               <h3 className="text-4xl font-semibold text-white mb-2">1000+</h3>
+               <p className="text-white/50 text-sm">Monthly claims assigned to a single investigator, making manual review impossible.</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ══ COMPANY BAR ════════════════════════════════ */}
-      <div className="border-y px-6 py-8" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <p className="mb-5 text-center text-[0.65rem] font-bold uppercase tracking-[0.16em]"
-            style={{ color: "rgba(255,255,255,0.25)" }}>
-            Trusted by 340+ insurers across India & Southeast Asia
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-12 opacity-40">
-            {companies.map(co => (
-              <span key={co} className="text-[0.95rem] font-bold hover:opacity-100 transition-opacity" style={{ color: "#fff" }}>{co}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ══ STATS ══════════════════════════════════════ */}
-      <section className="px-6 py-20" style={{ background: "rgba(255,255,255,0.01)" }}>
-        <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-px md:grid-cols-4"
-          style={{ background: "rgba(255,255,255,0.07)", borderRadius: 24, overflow: "hidden" }}>
-          {stats.map(s => (
-            <div key={s.val} className="flex flex-col items-center py-12 px-6 text-center"
-              style={{ background: "#0d0d11" }}>
-              <p className="text-[2.8rem] font-extrabold leading-none tracking-[-0.03em] mb-2"
-                style={{ color: "#72e3ad" }}>{s.val}</p>
-              <p className="text-[0.82rem] font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══ FEATURES ═══════════════════════════════════ */}
-      <section id="features" className="px-6 py-24">
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mb-16 text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[0.72rem] font-bold uppercase tracking-widest"
-              style={{ background: "rgba(114,227,173,0.06)", borderColor: "rgba(114,227,173,0.18)", color: "#72e3ad" }}>
-              <Sparkles size={12} /> Capabilities
-            </div>
-            <h2 className="mb-4 text-[2.6rem] font-extrabold tracking-[-0.03em] leading-tight" style={{ color: "#fff" }}>
-              Everything you need to stop fraud
-            </h2>
-            <p className="mx-auto max-w-[540px] text-[1rem] leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
-              Purpose-built for insurance fraud investigation — not a generic risk platform bolted on.
-            </p>
+          <div className="mb-10 text-center">
+             <h2 className="text-2xl font-medium text-white mb-3">The Fraud Typology Grid</h2>
+             <p className="text-white/50">Complex networks execute sophisticated fraud patterns daily.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {features.map(f => (
-              <div key={f.title}
-                className="rounded-2xl border p-7 transition-all duration-300 cursor-default group"
-                style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.07)" }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(114,227,173,0.3)";
-                  (e.currentTarget as HTMLDivElement).style.background = "rgba(114,227,173,0.04)";
-                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,0.07)";
-                  (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.03)";
-                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                }}
-              >
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl transition-all group-hover:scale-110"
-                  style={{ background: f.iconBg, color: f.iconColor }}>
-                  {iconMap[f.icon]}
-                </div>
-                <h3 className="mb-2 text-[1rem] font-bold text-white transition-colors group-hover:text-[#72e3ad]">{f.title}</h3>
-                <p className="text-[0.85rem] leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{f.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[ 
+              { title: "Staged Accidents", icon: TriangleAlert, desc: "Collusive networks generating fake emergencies." },
+              { title: "Phantom Billing", icon: FileWarning, desc: "Claims for treatments and tests never actually provided." },
+              { title: "Systemic Upcoding", icon: BarChart, desc: "Billing for more expensive procedures than performed." }
+            ].map((type) => (
+              <div key={type.title} className="flex gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02]">
+                 <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-white">
+                   <type.icon size={20} />
+                 </div>
+                 <div>
+                   <h4 className="text-white font-medium mb-1">{type.title}</h4>
+                   <p className="text-white/40 text-[0.85rem]">{type.desc}</p>
+                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ HOW IT WORKS ═══════════════════════════════ */}
-      <section id="how-it-works" className="px-6 py-24"
-        style={{ background: "rgba(255,255,255,0.01)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mb-14 text-center">
-            <h2 className="mb-3 text-[2.4rem] font-extrabold tracking-[-0.03em]" style={{ color: "#fff" }}>
-              Fraud verdict in under 2 seconds
-            </h2>
-            <p className="text-[0.95rem]" style={{ color: "rgba(255,255,255,0.4)" }}>
-              From submission to decision in one seamless, automated workflow.
-            </p>
-          </div>
-
-          <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="absolute left-[12.5%] right-[12.5%] top-8 hidden h-px md:block"
-              style={{ background: "rgba(255,255,255,0.07)" }} />
-            {steps.map((s, i) => (
-              <div key={s.num} className="relative z-10 text-center flex flex-col items-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-500 hover:scale-105"
-                  style={{
-                    background: i === 1 ? "linear-gradient(145deg,#0f1e3c,#162d56)" : "rgba(255,255,255,0.04)",
-                    border: i === 1 ? "1px solid rgba(114,227,173,0.3)" : "1px solid rgba(255,255,255,0.07)",
-                    boxShadow: i === 1 ? "0 0 40px rgba(114,227,173,0.15)" : undefined,
-                  }}>
-                  <span className="text-[1.1rem] font-black" style={{ color: i === 1 ? "#72e3ad" : "rgba(255,255,255,0.35)" }}>
-                    {s.num}
-                  </span>
-                </div>
-                <h3 className="mb-2 text-[0.95rem] font-bold text-white">{s.title}</h3>
-                <p className="text-[0.8rem] leading-relaxed max-w-[200px]" style={{ color: "rgba(255,255,255,0.4)" }}>{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ TESTIMONIALS ═══════════════════════════════ */}
-      <section className="px-6 py-24" style={{ background: "#0a0a0d", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mb-14 text-center">
-            <h2 className="mb-2 text-[2.4rem] font-extrabold tracking-[-0.03em]" style={{ color: "#fff" }}>
-              Loved by fraud investigators
-            </h2>
-            <p className="text-[0.95rem]" style={{ color: "rgba(255,255,255,0.4)" }}>
-              From small brokerages to Fortune 500 carriers — teams trust Detectra daily.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map(t => (
-              <div key={t.name} className="flex flex-col gap-5 rounded-2xl border p-7 transition-all hover:bg-white/[0.04]"
-                style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.07)" }}>
-                <div className="flex gap-1">
-                  {[0,1,2,3,4].map(i => <Star key={i} size={12} fill="#f59e0b" color="#f59e0b" />)}
-                </div>
-                <p className="flex-1 text-[0.88rem] leading-relaxed italic"
-                  style={{ color: "rgba(255,255,255,0.7)" }}>
-                  &ldquo;{t.text}&rdquo;
-                </p>
-                <div className="flex items-center gap-4 pt-2 border-t border-white/5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full text-[0.75rem] font-bold"
-                    style={{ background: "#72e3ad20", color: "#72e3ad" }}>
-                    {t.name.split(" ").map(n => n[0]).join("")}
+      {/* ══ SOLUTION PILLARS ════════════════════════════ */}
+      <section className="py-24 px-6 border-b border-white/5 backdrop-blur-3xl bg-transparent relative top-0 z-20">
+         <div className="mx-auto max-w-[1000px]">
+           <div className="text-center mb-16">
+             <h2 className="text-3xl font-medium text-white mb-4">Intelligence Engineered</h2>
+             <p className="text-white/50 max-w-xl mx-auto">A specialized architecture designed for precision, speed, and regulatory compliance.</p>
+           </div>
+           
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[ 
+                { icon: Zap, title: "Real-time Scoring", desc: "Sub-second inference times. Catch fraud exactly when the claim drops into your system." },
+                { icon: Brain, title: "Multi-Signal AI", desc: "Combines XGBoost on structured data with LLM analysis on clinical notes." },
+                { icon: Eye, title: "SHAP Explainability", desc: "Never a black box. Mathematical proof showing exactly which variables triggered the alert." },
+                { icon: User, title: "Investigator-First UX", desc: "Built with SIU teams. Intuitive workflows that reduce triage fatigue by 60%." }
+              ].map((p, i) => (
+                <div key={i} className="p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors relative overflow-hidden group">
+                  <div className="absolute -top-10 -right-10 p-8 opacity-[0.03] transform group-hover:scale-110 transition-transform">
+                     <p.icon size={150} />
                   </div>
-                  <div>
-                    <p className="text-[0.85rem] font-bold text-white">{t.name}</p>
-                    <p className="text-[0.72rem] font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>{t.role}</p>
+                  <div className="w-12 h-12 bg-white/10 text-white rounded-xl flex items-center justify-center mb-6">
+                    <p.icon size={24} />
                   </div>
+                  <h3 className="text-xl font-medium text-white mb-2">{p.title}</h3>
+                  <p className="text-white/50">{p.desc}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+           </div>
+         </div>
       </section>
 
-      {/* ══ PRICING ════════════════════════════════════ */}
-      <section id="pricing" className="px-6 py-24"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mb-16 text-center">
-            <h2 className="mb-2 text-[2.4rem] font-extrabold tracking-[-0.03em]" style={{ color: "#fff" }}>
-              Simple, predictable pricing
-            </h2>
-            <p className="text-[0.95rem]" style={{ color: "rgba(255,255,255,0.4)" }}>
-              All plans include a 14-day free trial. No credit card required.
-            </p>
-          </div>
+      {/* ══ LIVE DEMO SECTION ═══════════════════════════ */}
+      <section id="demo" className="py-32 px-6 border-b border-white/5 bg-[#020614] overflow-hidden relative">
+         <div className="absolute top-[20%] left-[50%] w-[1000px] h-[600px] bg-white/5 blur-[200px] -translate-x-1/2 pointer-events-none mix-blend-screen" />
+         
+         <div className="mx-auto max-w-[1000px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+            
+            <div className="relative z-10">
+               <h2 className="text-3xl font-medium text-white mb-4">Experience the Engine</h2>
+               <p className="text-white/50 mb-8 text-lg">Input a simulated claim form and watch our multi-signal pipeline extract, analyze, and score the risk instantly.</p>
+               
+               <div className="bg-[#050508] border border-white/10 rounded-2xl p-6 shadow-2xl">
+                 <div className="space-y-4 mb-6">
+                   <div>
+                     <label className="text-xs font-medium text-white/50 mb-1.5 block uppercase tracking-wider">Patient Name</label>
+                     <input type="text" disabled value="Abhishek Sharma" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white/80 outline-none" />
+                   </div>
+                   <div className="grid grid-cols-2 gap-4">
+                     <div>
+                       <label className="text-xs font-medium text-white/50 mb-1.5 block uppercase tracking-wider">Diagnosis (ICD)</label>
+                       <input type="text" disabled value="M17.11 (Osteoarthritis)" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white/80 outline-none" />
+                     </div>
+                     <div>
+                       <label className="text-xs font-medium text-white/50 mb-1.5 block uppercase tracking-wider">Procedure (CPT)</label>
+                       <input type="text" disabled value="27447 (Arthroplasty)" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white/80 outline-none" />
+                     </div>
+                   </div>
+                   <div>
+                     <label className="text-xs font-medium text-white/50 mb-1.5 block uppercase tracking-wider">Claim Amount (₹)</label>
+                     <input type="text" disabled value="3,20,000" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white/80 outline-none" />
+                   </div>
+                 </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pricing.map(p => (
-              <div key={p.name} className="relative overflow-hidden rounded-3xl border p-8 transition-all hover:translate-y-[-4px]"
-                style={{
-                  background: p.highlight ? "linear-gradient(145deg,#0f1e3c 0%,#162d56 100%)" : "rgba(255,255,255,0.03)",
-                  borderColor: p.highlight ? "rgba(114,227,173,0.3)" : "rgba(255,255,255,0.08)",
-                  boxShadow: p.highlight ? "0 0 0 1px rgba(114,227,173,0.1), 0 32px 64px -12px rgba(0,0,0,0.5)" : undefined,
-                }}>
-                {p.highlight && (
-                  <>
-                    <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-25" style={{ background: "#72e3ad", filter: "blur(40px)" }} />
-                    <div className="absolute right-6 top-6 rounded-full px-3 py-1 text-[0.62rem] font-bold"
-                      style={{ background: "#72e3ad20", color: "#72e3ad", border: "1px solid #72e3ad40" }}>
-                      MOST POPULAR
-                    </div>
-                  </>
+                 <div className="flex gap-3">
+                   <button 
+                     onClick={runSimulation}
+                     disabled={simState === "analyzing"}
+                     className="flex-1 bg-white text-black font-semibold py-3 rounded-xl disabled:opacity-50 transition-all flex items-center justify-center gap-2 hover:bg-neutral-200"
+                   >
+                     {simState === "analyzing" ? <RefreshCw className="animate-spin" size={18} /> : <Activity size={18} />}
+                     Analyze Claim
+                   </button>
+                   <button 
+                     onClick={() => setSimState("idle")}
+                     className="px-5 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 transition-colors"
+                   >
+                     Simulate
+                   </button>
+                 </div>
+               </div>
+            </div>
+
+            <div className="relative">
+              <AnimatePresence mode="wait">
+                {simState === "idle" && (
+                  <motion.div 
+                    key="idle"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="h-[420px] flex flex-col items-center justify-center border border-dashed border-white/10 rounded-3xl bg-white/[0.01]"
+                  >
+                    <Search size={40} className="text-white/20 mb-4" />
+                    <p className="text-white/40">Waiting for claim payload...</p>
+                  </motion.div>
                 )}
-                <div className="relative">
-                  <p className="mb-2 text-[0.75rem] font-bold uppercase tracking-widest"
-                    style={{ color: p.highlight ? "#72e3ad" : "rgba(255,255,255,0.4)" }}>{p.name}</p>
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-[2.2rem] font-extrabold tracking-[-0.03em] text-white">{p.price}</span>
-                    <span className="text-[0.9rem]" style={{ color: "rgba(255,255,255,0.35)" }}>{p.period}</span>
-                  </div>
-                  <p className="mb-7 text-[0.82rem] leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{p.desc}</p>
 
-                  <Link href={p.cta === "Contact Sales" ? "mailto:sales@detectra.io" : "/sign-up"}
-                    className="mb-8 flex items-center justify-center gap-2.5 rounded-2xl py-3.5 text-[0.9rem] font-bold transition-all active:scale-95"
-                    style={
-                      p.highlight
-                        ? { background: "#72e3ad", color: "#0a1a10" }
-                        : { background: "rgba(255,255,255,0.06)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)" }
-                    }>
-                    {p.cta} <ArrowRight size={16} />
-                  </Link>
+                {simState === "analyzing" && (
+                  <motion.div 
+                    key="analyzing"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="h-[420px] flex flex-col items-center justify-center rounded-3xl bg-[#050508] border border-white/5 relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-white/5 animate-pulse" />
+                    <RefreshCw size={40} className="text-white mb-6 animate-spin" />
+                    <div className="flex flex-col items-center gap-3">
+                       <span className="text-white/60 font-mono text-sm leading-none bg-white/5 px-3 py-1 rounded">Executing XGBoost Trees...</span>
+                       <span className="text-white/40 font-mono text-sm leading-none bg-white/5 px-3 py-1 rounded">Cross-referencing network graphs</span>
+                       <span className="text-white/20 font-mono text-sm leading-none bg-white/5 px-3 py-1 rounded">Calculating SHAP values</span>
+                    </div>
+                  </motion.div>
+                )}
 
-                  <div className="space-y-3.5">
-                    {p.features.map(f => (
-                      <div key={f} className="flex items-center gap-3">
-                        <CheckCircle2 size={14} style={{ color: "#72e3ad", flexShrink: 0 }} strokeWidth={3} />
-                        <span className="text-[0.82rem]" style={{ color: p.highlight ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.45)" }}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+                {simState === "complete" && (
+                  <motion.div 
+                    key="complete"
+                    initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                    className="h-[420px] rounded-3xl border border-red-500/20 bg-gradient-to-b from-[#050508] to-red-950/20 p-8 flex flex-col relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 left-0 w-full h-1 bg-red-500" />
+                    <div className="flex items-start justify-between mb-8">
+                       <div>
+                         <h3 className="text-red-400 font-semibold mb-1 text-lg flex items-center gap-2"><TriangleAlert size={18}/> High Risk Detected</h3>
+                         <p className="text-white/50 text-sm">Review recommended before payout.</p>
+                       </div>
+                       <RiskGauge targetScore={89} size={90} />
+                    </div>
+
+                    <h4 className="text-white text-sm font-medium mb-3 pb-2 border-b border-white/10 uppercase tracking-widest">Top Explainability Signals</h4>
+                    <div className="space-y-3 flex-1">
+                      <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="flex justify-between items-center text-sm bg-red-500/10 p-3 rounded-xl border border-red-500/20">
+                         <span className="text-white/80 font-medium">Historical Network Collusion</span>
+                         <span className="text-red-400 font-mono font-bold">+38%</span>
+                      </motion.div>
+                      <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="flex justify-between items-center text-sm bg-red-500/10 p-3 rounded-xl border border-red-500/20">
+                         <span className="text-white/80 font-medium">Distance: Clinic vs Residence</span>
+                         <span className="text-red-400 font-mono font-bold">+24%</span>
+                      </motion.div>
+                      <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-between items-center text-sm bg-red-500/10 p-3 rounded-xl border border-red-500/20">
+                         <span className="text-white/80 font-medium">Suspicious ICD/CPT mapping gap</span>
+                         <span className="text-red-400 font-mono font-bold">+16%</span>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+         </div>
+      </section>
+
+      {/* ══ AI ENGINE GEMINI EFFECT ════════════════════ */}
+      <DetectionEngineEffect />
+
+      {/* ══ TECH STACK ══════════════════════════════════ */}
+      <section className="py-24 px-6 border-b border-white/5 text-center">
+         <div className="mx-auto max-w-[800px]">
+           <p className="mb-10 text-[0.8rem] font-bold text-white/40 uppercase tracking-[0.2em] border border-white/10 inline-block px-4 py-1.5 rounded-full bg-white/[0.02]">Enterprise-grade detection. Zero infrastructure cost.</p>
+           <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 opacity-70">
+             <div className="flex items-center gap-2 font-semibold text-xl text-white"><Cpu className="text-white/70"/> XGBoost</div>
+             <div className="flex items-center gap-2 font-semibold text-xl text-white"><Server className="text-white/70"/> FastAPI</div>
+             <div className="flex items-center gap-2 font-semibold text-xl text-white"><Globe className="text-white/70"/> Next.js</div>
+             <div className="flex items-center gap-2 font-semibold text-xl text-white"><Sparkles className="text-white/70"/> Groq API</div>
+             <div className="flex items-center gap-2 font-semibold text-xl text-white"><Database className="text-white/70"/> PostgreSQL</div>
+           </div>
+         </div>
+      </section>
+
+      {/* ══ IMPACT METRICS ══════════════════════════════ */}
+      <section className="py-32 px-6 border-b border-white/5 bg-[#020614]">
+         <div className="mx-auto max-w-[1000px] text-center mb-16">
+           <h2 className="text-3xl font-medium text-white mb-4">Measured Impact</h2>
+           <p className="text-white/50 max-w-xl mx-auto">See how moving from legacy rules engines to our ML pipeline transforms operations instantly.</p>
+         </div>
+
+         <div className="mx-auto max-w-[900px] border border-white/10 rounded-2xl overflow-hidden bg-[#050508] shadow-2xl">
+           <div className="grid grid-cols-3 bg-white/5 p-5 text-sm font-semibold uppercase tracking-widest text-white/50">
+             <div>Metric</div>
+             <div>Legacy Systems</div>
+             <div className="text-white">Detectra AI</div>
+           </div>
+           
+           {[ 
+             { name: "Detection Rate", old: "40%", new: "85%" },
+             { name: "Time to Decision", old: "Hours to Days", new: "< 2 seconds" },
+             { name: "False Positives", old: "High (Alert Fatigue)", new: "12% (Precision 88%)" },
+             { name: "Explainability", old: "Black-box warnings", new: "Granular SHAP values" }
+           ].map((row, i) => (
+             <div key={i} className="grid grid-cols-3 p-6 border-t border-white/5 text-white/80 items-center transition-colors hover:bg-white/[0.02]">
+                <div className="font-medium text-white">{row.name}</div>
+                <div className="text-white/50 text-sm font-medium">{row.old}</div>
+                <div className="text-white font-semibold text-lg flex items-center gap-2"><CircleCheck size={18} className="text-white/50" /> {row.new}</div>
+             </div>
+           ))}
+         </div>
+      </section>
+
+      {/* ══ CTA ═════════════════════════════════════════ */}
+      <section className="py-32 px-6 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />
+        <div className="relative z-10 mx-auto max-w-[600px] border border-white/10 rounded-[32px] p-12 bg-[#050508] shadow-[0_0_100px_rgba(255,255,255,0.02)]">
+          <h2 className="text-4xl font-medium text-white mb-4 tracking-tight">Request Early Access</h2>
+          <p className="text-white/50 mb-10 leading-relaxed">We are onboarding select Indian health insurance providers for pilot programs. Secure your spot in the trial.</p>
+          
+          <form className="flex flex-col gap-4 text-left" onSubmit={(e) => e.preventDefault()}>
+            <input 
+              type="email" 
+              placeholder="name@insurance-carrier.com" 
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-white/40 placeholder-white/20 transition-colors"
+            />
+            <button className="w-full bg-white text-black font-semibold py-4 rounded-xl transition-all hover:bg-neutral-200 hover:scale-[1.02] active:scale-95 shadow-xl">
+               Join Waitlist
+            </button>
+          </form>
+          <div className="mt-8 flex items-center justify-center gap-2 text-white/30 text-xs font-medium uppercase tracking-widest">
+            <Lock size={12} /> Your data is completely secure.
           </div>
         </div>
       </section>
 
-      {/* ══ CTA BANNER ═════════════════════════════════ */}
-      <section className="px-6 py-24">
-        <div className="relative mx-auto max-w-[900px] overflow-hidden rounded-3xl p-16 text-center"
-          style={{ background: "linear-gradient(135deg,#0a1122 0%,#0d142b 100%)", border: "1px solid rgba(114,227,173,0.18)" }}>
-          <div className="pointer-events-none absolute left-1/2 top-0 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30"
-            style={{ background: "#72e3ad", filter: "blur(80px)" }} />
-          <div className="relative">
-            <p className="mb-4 text-[0.75rem] font-bold uppercase tracking-[0.2em]" style={{ color: "#72e3ad" }}>
-              Enterprise Ready
-            </p>
-            <h2 className="mb-6 text-[2.6rem] font-extrabold tracking-[-0.03em] leading-tight text-white">
-              Start detecting fraud today
-            </h2>
-            <p className="mb-10 text-[1.05rem] leading-relaxed max-w-[600px] mx-auto" style={{ color: "#94a3b8" }}>
-              Join 340+ insurance companies using Detectra. Onboard in under 2 weeks. ROI-positive within the first month.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-5">
-              <Link href="/sign-up"
-                className="flex items-center gap-3 rounded-2xl px-10 py-4 text-[0.95rem] font-bold transition-all hover:opacity-90 hover:shadow-[0_0_50px_rgba(114,227,173,0.3)] active:scale-95"
-                style={{ background: "#72e3ad", color: "#0a1a10" }}>
-                Start Free Trial <ArrowRight size={18} />
-              </Link>
-              <Link href="/login"
-                className="flex items-center gap-3 rounded-2xl border px-10 py-4 text-[0.95rem] font-bold transition-all hover:bg-white/5 active:scale-95"
-                style={{ borderColor: "rgba(255,255,255,0.15)", color: "#fff" }}>
-                Sign In to Dashboard
-              </Link>
-            </div>
-            <p className="mt-7 text-[0.78rem] font-medium" style={{ color: "rgba(255,255,255,0.3)" }}>
-              14-day free trial · No credit card required · Unlimited features
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ FOOTER ═════════════════════════════════════ */}
-      <footer className="border-t px-6 py-20" style={{ borderColor: "rgba(255,255,255,0.06)", background: "#08080b" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mb-16 grid grid-cols-2 md:grid-cols-5 gap-12">
-            <div className="col-span-2">
-              <BrandLogo href="/" size="sm" className="mb-5" />
-              <p className="mb-8 max-w-[280px] text-[0.85rem] leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
-                The industry's most advanced AI fraud detection platform, designed specifically for high-volume insurance carriers.
-              </p>
-              <div className="flex gap-2.5">
-                {[<Lock key="l" size={14}/>, <Globe key="g" size={14}/>, <TrendingUp key="t" size={14}/>].map((icon, i) => (
-                  <div key={i} className="flex h-9 w-9 items-center justify-center rounded-xl transition-colors hover:bg-white/10"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.4)" }}>
-                    {icon}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {[
-              { heading: "Product",  links: ["Features", "How It Works", "Pricing", "API Docs"] },
-              { heading: "Legal",    links: ["Privacy Policy", "Terms of Service", "IRDAI Compliance"] },
-              { heading: "Company",  links: ["About", "Blog", "Careers", "Contact"] },
-            ].map(col => (
-              <div key={col.heading}>
-                <h4 className="mb-5 text-[0.75rem] font-bold uppercase tracking-widest text-[#72e3ad]">
-                  {col.heading}
-                </h4>
-                <div className="flex flex-col gap-3.5">
-                  {col.links.map(l => (
-                    <a key={l} href="#" className="text-[0.85rem] transition-colors"
-                      style={{ color: "rgba(255,255,255,0.4)" }}
-                      onMouseEnter={e => (e.currentTarget.style.color = "#72e3ad")}
-                      onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
-                    >
-                      {l}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex items-center justify-between border-t pt-10" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-            <p className="text-[0.8rem]" style={{ color: "rgba(255,255,255,0.3)" }}>
-              © 2026 Detectra Technologies Pvt. Ltd. All rights reserved.
-            </p>
-            <div className="flex gap-8">
-              <p className="text-[0.8rem]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                Built in India. Scaled globally.
-              </p>
-              <p className="text-[0.8rem]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                Version 1.42.0
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
