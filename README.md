@@ -3,11 +3,6 @@
 # Detectra | Enterprise Fraud Intelligence
 **Next-Gen sub-second AI engine for elite insurance investigation units.**
 
-[![Next.js](https://img.shields.io/badge/Next.js-14.2-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![IRDAI Compliant](https://img.shields.io/badge/Compliance-IRDAI-success?style=for-the-badge&logo=shield&logoColor=white)](https://detectra.io)
-[![Enterprise Ready](https://img.shields.io/badge/Security-SOC2_Type_II-blue?style=for-the-badge&logo=lock&logoColor=white)](https://detectra.io)
 
 
 </div>
