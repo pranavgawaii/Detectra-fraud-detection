@@ -97,11 +97,23 @@ export const HeroSection = () => {
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, delay: 0.5 }}
-        className="relative w-full max-w-5xl mt-6"
+        className="relative w-full mt-0"
+        style={{ perspective: '2000px' }}
       >
-        <FauxDashboard />
         {/* Green glow behind dashboard */}
-        <Glow variant="top" className="!top-[30%]" />
+        <div className="absolute inset-0 z-0">
+          <Glow variant="center" />
+        </div>
+        {/* Dashboard with 3D tilt */}
+        <div
+          className="relative z-10"
+          style={{
+            transform: 'rotateX(2deg)',
+            transformOrigin: 'center top',
+          }}
+        >
+          <FauxDashboard />
+        </div>
       </motion.div>
 
       {/* Video Modal */}
