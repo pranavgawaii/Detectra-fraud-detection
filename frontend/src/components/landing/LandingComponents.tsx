@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ArrowRight, MapPin, Mail, Search, Target, Users, ChevronDown } from 'lucide-react';
 import BrandLogo from '@/components/branding/BrandLogo';
+import { Icons } from '@/components/ui/icons';
+import { Button } from '@/components/ui/button';
 
 // ── Header (Premium SaaS) ────────────────────────────────────────
 export const LandingHeader = ({ menuState, setMenuState }: { menuState: boolean, setMenuState: (s: boolean) => void }) => {
