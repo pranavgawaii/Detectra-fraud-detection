@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ArrowRight, Play, Shield, Sparkles, XIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FauxDashboard } from './FauxDashboard';
-import { Glow } from '@/components/ui/glow';
 
 export const HeroSection = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -94,24 +93,20 @@ export const HeroSection = () => {
 
       {/* Dashboard Preview with Green Glow */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.5 }}
-        className="relative w-full mt-0"
-        style={{ perspective: '2000px' }}
+        className="relative w-full max-w-5xl mx-auto mt-0"
       >
         {/* Green glow behind dashboard */}
-        <div className="absolute inset-0 z-0">
-          <Glow variant="center" />
-        </div>
-        {/* Dashboard with 3D tilt */}
         <div
-          className="relative z-10"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/3 w-[80%] h-[400px] pointer-events-none z-0"
           style={{
-            transform: 'rotateX(2deg)',
-            transformOrigin: 'center top',
+            background: 'radial-gradient(ellipse at center, rgba(5,150,105,0.15) 0%, rgba(5,150,105,0.05) 40%, transparent 70%)',
+            filter: 'blur(40px)',
           }}
-        >
+        />
+        <div className="relative z-10">
           <FauxDashboard />
         </div>
       </motion.div>
