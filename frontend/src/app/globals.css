@@ -39,8 +39,8 @@
   --sidebar-primary-foreground: #fbfbfb;
   --font-sans: var(--font-geist), "Geist", "Inter", sans-serif;
   --font-mono: "Geist Mono", monospace;
-  --brand: 156 72% 67%;
-  --brand-foreground: 160 84% 39%;
+  --brand: 160 84% 39%;
+  --brand-foreground: 152 76% 52%;
 }
 
 .dark {
@@ -78,14 +78,8 @@
   --sidebar-primary-foreground: #fbfbfb;
   --font-sans: var(--font-geist), "Geist", "Inter", sans-serif;
   --font-mono: "Geist Mono", monospace;
-  --brand: 156 72% 67%; /* Vibrant Emerald 400 */
-  --brand-foreground: 160 84% 39%; /* Deep Emerald 500 */
-}
-
-@layer utilities {
-  .vibrant-glow {
-    filter: drop-shadow(0 0 10px hsla(var(--brand), 0.4)) drop-shadow(0 0 20px hsla(var(--brand), 0.2));
-  }
+  --brand: 152 76% 52%;
+  --brand-foreground: 160 84% 39%;
 }
 
 @theme inline {

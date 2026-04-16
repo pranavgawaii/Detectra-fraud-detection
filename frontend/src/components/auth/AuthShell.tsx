@@ -33,7 +33,7 @@ export default function AuthShell({
         <div
           className="absolute left-1/2 -translate-x-1/2 -top-[100px] w-[80%] h-[500px]"
           style={{
-            background: 'radial-gradient(ellipse 70% 50% at 50% 30%, hsla(var(--brand), 0.15) 0%, hsla(var(--brand-foreground), 0.05) 45%, transparent 75%)',
+            background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 75%)',
           }}
         />
       </div>
