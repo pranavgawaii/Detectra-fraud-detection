@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from typing import Optional, List
 import random
 import joblib
-import pandas as pd
 import numpy as np
 
 # Load environment variables
@@ -27,7 +26,7 @@ model = None
 try:
     if os.path.exists(MODEL_PATH):
         model = joblib.load(MODEL_PATH)
-        print("✅ XGBoost Fraud Model Loaded")
+        print("✅ Random Forest Fraud Model Loaded")
     else:
         print("⚠️ Warning: Fraud model not found. Using fallbacks.")
 except Exception as e:
@@ -71,7 +70,6 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def chat_completion(request: ChatRequest):
-    # Construct context-aware prompt using model data
     context = ""
     if request.score_response:
         context = f"Context: The current claim has a risk score of {request.score_response.get('risk_score_100')}/100 and has flags: {', '.join(request.score_response.get('explanation', []))}."
@@ -89,21 +87,19 @@ class AnalyzeRequest(BaseModel):
 
 @app.post("/analyze")
 async def analyze_claim(request: AnalyzeRequest):
-    # 1. Prepare features for ML Model
-    features = pd.DataFrame([{
-        'claim_amount': request.claim_amount,
-        'expected_amount': request.expected_amount,
-        'policy_age_days': request.policy_age_days,
-        'claim_frequency': request.claim_frequency
-    }])
+    # 1. Prepare features for ML Model (Using Numpy instead of Pandas to save 100MB+)
+    features = np.array([[
+        request.claim_amount,
+        request.expected_amount,
+        request.policy_age_days,
+        request.claim_frequency
+    ]])
 
     # 2. Model Inference
     if model:
-        # Get probability
         risk_prob = model.predict_proba(features)[0][1]
         risk_score = int(risk_prob * 100)
     else:
-        # Fallback to smart heuristic if model fails to load
         risk_score = random.randint(40, 60)
 
     # 3. Dynamic Signal Generation
