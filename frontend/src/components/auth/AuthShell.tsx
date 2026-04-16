@@ -26,37 +26,33 @@ export default function AuthShell({
   ],
 }: AuthShellProps) {
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-neutral-400 font-sans flex flex-col items-center justify-center p-6 relative selection:bg-white selection:text-black">
-      {/* Background Decor */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/[0.03] rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/[0.02] rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-screen bg-[#030303] text-neutral-400 font-sans flex flex-col items-center justify-center p-6 relative selection:bg-[var(--primary)] selection:text-white overflow-hidden">
+      {/* Premium Light Orbs */}
+      <div className="absolute top-0 right-[20%] w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[var(--primary)]/10 rounded-full blur-[120px] mix-blend-screen pointer-events-none animate-pulse duration-[10s]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-blue-500/10 rounded-full blur-[150px] mix-blend-screen pointer-events-none" />
 
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-[440px] relative z-10"
       >
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-8">
           <BrandLogo href="/" size="md" />
         </div>
 
         <div className="text-center mb-10">
           {eyebrow && (
-            <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-neutral-500 mb-3">{eyebrow}</p>
+            <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-[var(--primary)] mb-4">{eyebrow}</p>
           )}
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-3">{title}</h1>
-          <div className="text-neutral-500 text-[0.9rem] leading-relaxed">
+          <h1 className="text-[2.2rem] font-black tracking-tight text-white mb-2 leading-none">{title}</h1>
+          <div className="text-neutral-400 text-[0.95rem] leading-relaxed max-w-[340px] mx-auto">
             {description}
           </div>
         </div>
 
-        <div className="bg-[#0D0D0D] border border-white/[0.08] rounded-[24px] p-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative overflow-hidden">
-          {/* Subtle top light */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          
+        <div className="bg-white/[0.02] border border-white/[0.05] rounded-[24px] p-8 shadow-[0_0_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
           <div className="relative z-10">
             {children}
           </div>
@@ -76,7 +72,7 @@ export default function AuthShell({
             href="/" 
             className="group flex items-center gap-2 text-[0.7rem] font-black uppercase tracking-[0.2em] text-neutral-500 hover:text-white transition-all"
           >
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform text-[var(--primary)]" />
             Back to Command Center
           </Link>
         </div>

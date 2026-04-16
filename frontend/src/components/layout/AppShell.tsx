@@ -48,7 +48,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { theme, toggle } = useTheme();
   const [collapsed,  setCollapsed]  = useState(false);
-  const [upgradeDismissed, setUpgradeDismissed] = useState(false);
   const [closedGroups, setClosedGroups] = useState<Record<string,boolean>>({});
 
   const isDark = theme === "dark";
@@ -194,14 +193,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
 
-        {!collapsed && !upgradeDismissed && (
-          <div className="mx-2.5 mb-4 rounded-xl p-3.5 bg-[var(--primary)]/10 border border-[var(--primary)]/20 relative">
-            <button onClick={() => setUpgradeDismissed(true)} className="absolute right-2 top-2 text-neutral-500 hover:text-white"><X size={10} /></button>
-            <p className="text-[0.78rem] font-bold mb-0.5 text-[var(--foreground)]">Upgrade Pro!</p>
-            <p className="text-[0.68rem] text-[var(--muted-foreground)]">Unlock elite features today.</p>
-            <Link href="/upgrade" className="mt-2.5 block w-full rounded-lg py-1.5 text-center text-[0.72rem] font-bold bg-[var(--primary)] text-white">Upgrade Plan</Link>
-          </div>
-        )}
       </aside>
 
       {/* ══ MAIN AREA ════════════════════════════════════════ */}
@@ -220,7 +211,30 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <button onClick={() => theme !== "dark" && toggle()} className={`p-1.5 rounded-lg ${isDark ? "bg-[var(--card)] text-[var(--primary)]" : "text-[var(--muted-foreground)]"}`}><Moon size={14} /></button>
             </div>
             <button className="h-9 w-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)]"><Bell size={15} /></button>
-            <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold text-[0.75rem]">{initials}</div>
+            <Menu>
+              <MenuTrigger bg={false}>
+                <button className="h-9 w-9 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold text-[0.75rem] transition-transform active:scale-95 cursor-pointer hover:opacity-90">{initials}</button>
+              </MenuTrigger>
+              <MenuPopup align="right" className="w-56 mt-2">
+                <div className="px-3 py-2.5 mb-1 bg-[var(--muted)]/50 rounded-lg mx-1">
+                  <p className="text-[0.75rem] font-bold text-[var(--foreground)] truncate">{displayName}</p>
+                  <p className="text-[0.65rem] text-[var(--muted-foreground)] truncate">{roleLabel}</p>
+                </div>
+                <MenuItem href="/account">
+                  <SettingsIcon size={14} className="mr-2" /> Account Settings
+                </MenuItem>
+                <MenuItem href="/dashboard">
+                  <LayoutGrid size={14} className="mr-2" /> Dashboard
+                </MenuItem>
+                <MenuSeparator />
+                <MenuItem onClick={async () => {
+                  await supabase.auth.signOut();
+                  window.location.href = "/login";
+                }} className="text-red-500 hover:text-red-600 hover:bg-red-500/10">
+                  <LogOutIcon size={14} className="mr-2" /> Log Out
+                </MenuItem>
+              </MenuPopup>
+            </Menu>
           </div>
         </header>
 

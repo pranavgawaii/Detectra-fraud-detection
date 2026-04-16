@@ -53,7 +53,7 @@ export default function LoginPage() {
       description={
         <>
           Access your fraud intelligence dashboard. No account?{" "}
-          <Link href="/sign-up" className="text-white hover:text-emerald-400 font-bold transition-all">
+          <Link href="/sign-up" className="text-[var(--primary)] hover:text-white font-bold transition-all">
             Secure clearance
           </Link>
         </>
@@ -116,7 +116,7 @@ export default function LoginPage() {
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com" 
-                className="w-full h-12 bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 text-[0.9rem] text-white outline-none transition-all focus:border-white/20 focus:bg-white/[0.05]"
+                className="w-full h-12 bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 text-[0.9rem] text-white outline-none transition-all focus:border-[var(--primary)]/50 focus:bg-[var(--primary)]/5 focus:ring-4 focus:ring-[var(--primary)]/10"
                 required
               />
             </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500">Security Key</label>
-                <Link href="#" className="text-[0.6rem] font-bold text-emerald-500 hover:text-emerald-400 transition-colors uppercase tracking-widest">Forgot?</Link>
+                <Link href="#" className="text-[0.6rem] font-bold text-[var(--primary)] hover:text-white transition-colors uppercase tracking-widest">Forgot?</Link>
               </div>
               <div className="relative">
                 <input
@@ -132,13 +132,13 @@ export default function LoginPage() {
                   value={pass} 
                   onChange={(e) => setPass(e.target.value)}
                   placeholder="••••••••••••" 
-                  className="w-full h-12 bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 pr-12 text-[0.9rem] text-white outline-none transition-all focus:border-white/20 focus:bg-white/[0.05]"
+                  className="w-full h-12 bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 pr-12 text-[0.9rem] text-white outline-none transition-all focus:border-[var(--primary)]/50 focus:bg-[var(--primary)]/5 focus:ring-4 focus:ring-[var(--primary)]/10"
                   required
                 />
                 <button
                   type="button" 
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-neutral-600 hover:text-white transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-neutral-500 hover:text-[var(--primary)] transition-all"
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -150,7 +150,7 @@ export default function LoginPage() {
             <button
               type="submit" 
               disabled={loading}
-              className="w-full h-12 bg-white text-black font-bold text-[0.9rem] rounded-xl transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+              className="w-full h-12 bg-[var(--primary)] text-white font-bold text-[0.9rem] rounded-xl transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : "Sign in to Detectra"}
             </button>
@@ -158,7 +158,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleDemoLogin}
               disabled={loading}
-              className="w-full h-12 bg-[#0A0A0A] text-neutral-300 border border-white/[0.08] font-bold text-[0.9rem] rounded-xl transition-all hover:bg-white/[0.05] hover:text-white active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+              className="w-full h-12 bg-white/[0.02] border border-white/[0.08] text-neutral-300 font-bold text-[0.9rem] rounded-xl transition-all hover:bg-white/[0.05] hover:border-white/[0.15] hover:text-white active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
             >
               Access Demo Environment
             </button>
