@@ -62,4 +62,9 @@ frontend/.next/
 frontend/node_modules/
 backend/node_modules/
 backend/venv/
+backend/__pycache__/
+*.log
+*.pkl
+pr_resolution.patch
+.DS_Store
 
