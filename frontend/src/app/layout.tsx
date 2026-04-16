@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 };
 
 import { ChatProvider } from "@/components/providers/ChatProvider";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <ChatProvider>
             {children}
+            <Analytics />
           </ChatProvider>
         </ThemeProvider>
       </body>
