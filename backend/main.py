@@ -21,7 +21,7 @@ CHAT_MODEL = "sarvam-30b"
 TTS_MODEL = "bulbul:v3"
 
 # Load ML Model
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "fraud_model.joblib")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "detectra_model.pkl")
 model = None
 try:
     if os.path.exists(MODEL_PATH):

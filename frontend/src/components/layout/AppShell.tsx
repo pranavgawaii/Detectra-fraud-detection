@@ -212,8 +212,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <button className="h-9 w-9 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)]"><Bell size={15} /></button>
             <Menu>
-              <MenuTrigger bg={false}>
-                <button className="h-9 w-9 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold text-[0.75rem] transition-transform active:scale-95 cursor-pointer hover:opacity-90">{initials}</button>
+              <MenuTrigger>
+                <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold text-[0.75rem] transition-transform active:scale-95 cursor-pointer hover:opacity-90">{initials}</div>
               </MenuTrigger>
               <MenuPopup align="right" className="w-56 mt-2">
                 <div className="px-3 py-2.5 mb-1 bg-[var(--muted)]/50 rounded-lg mx-1">
