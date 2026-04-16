@@ -215,7 +215,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <MenuTrigger>
                 <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold text-[0.75rem] transition-transform active:scale-95 cursor-pointer hover:opacity-90">{initials}</div>
               </MenuTrigger>
-              <MenuPopup align="end" className="w-56 mt-2">
+              <MenuPopup align="end" className="w-56 mt-2 relative z-[9999]">
                 <div className="px-3 py-2.5 mb-1 bg-[var(--muted)]/50 rounded-lg mx-1">
                   <p className="text-[0.75rem] font-bold text-[var(--foreground)] truncate">{displayName}</p>
                   <p className="text-[0.65rem] text-[var(--muted-foreground)] truncate">{roleLabel}</p>
