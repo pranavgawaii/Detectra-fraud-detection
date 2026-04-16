@@ -37,8 +37,8 @@
   --destructive-foreground: #ffffff;
   --sidebar-accent-foreground: #343434;
   --sidebar-primary-foreground: #fbfbfb;
-  --font-sans: "Outfit", sans-serif;
-  --font-mono: monospace;
+  --font-sans: var(--font-geist), "Geist", "Inter", sans-serif;
+  --font-mono: "Geist Mono", monospace;
 }
 
 .dark {
@@ -74,8 +74,8 @@
   --destructive-foreground: #ffffff;
   --sidebar-accent-foreground: #c3c0b6;
   --sidebar-primary-foreground: #fbfbfb;
-  --font-sans: "Outfit", sans-serif;
-  --font-mono: monospace;
+  --font-sans: var(--font-geist), "Geist", "Inter", sans-serif;
+  --font-mono: "Geist Mono", monospace;
 }
 
 @theme inline {

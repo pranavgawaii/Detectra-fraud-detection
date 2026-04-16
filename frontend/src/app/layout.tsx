@@ -4,9 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { BRAND } from "@/lib/brand";
 
-const detectraSans = localFont({
+const geist = localFont({
   src: "./fonts/GeistVF.woff",
-  variable: "--font-outfit",
+  variable: "--font-geist",
   display: "swap",
 });
 
@@ -30,8 +30,8 @@ import { ChatProvider } from "@/components/providers/ChatProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={detectraSans.variable}>
-      <body className="antialiased">
+    <html lang="en" suppressHydrationWarning className={geist.variable}>
+      <body className={`${geist.className} antialiased`}>
         <ThemeProvider>
           <ChatProvider>
             {children}

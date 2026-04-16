@@ -32,7 +32,7 @@ const sizeMap = {
 
 const toneStyles = {
   light: {
-    labelStyle: { color: "var(--foreground)" },
+    labelStyle: { color: "#FFFFFF" },
   },
   dark: {
     labelStyle: { color: "#f8fafc" },
@@ -65,7 +65,7 @@ export default function BrandLogo({
       </span>
       {showName && (
         <span 
-          className={["font-extrabold tracking-tighter", config.label, labelClassName].join(" ")}
+          className={["font-bold tracking-tight", config.label, labelClassName].join(" ")}
           style={theme.labelStyle}
         >
           {BRAND.name}
