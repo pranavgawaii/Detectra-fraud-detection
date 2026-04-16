@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import BrandLogo from "@/components/branding/BrandLogo";
-import { Glow } from "@/components/ui/glow";
+
 import { motion } from "framer-motion";
 
 type AuthShellProps = {
@@ -30,7 +30,12 @@ export default function AuthShell({
     <div className="min-h-screen bg-[#060606] text-neutral-400 font-sans flex flex-col items-center justify-center p-4 sm:p-6 relative selection:bg-emerald-900/30 selection:text-emerald-300 overflow-hidden">
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <Glow variant="above" className="opacity-40" />
+        <div
+          className="absolute left-1/2 -translate-x-1/2 -top-[100px] w-[80%] h-[500px]"
+          style={{
+            background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(16,185,129,0.12) 0%, rgba(5,150,105,0.05) 40%, transparent 70%)',
+          }}
+        />
       </div>
 
       {/* Subtle grid texture */}
