@@ -39,6 +39,8 @@
   --sidebar-primary-foreground: #fbfbfb;
   --font-sans: var(--font-geist), "Geist", "Inter", sans-serif;
   --font-mono: "Geist Mono", monospace;
+  --brand: 160 84% 39%;
+  --brand-foreground: 152 76% 52%;
 }
 
 .dark {
@@ -76,6 +78,8 @@
   --sidebar-primary-foreground: #fbfbfb;
   --font-sans: var(--font-geist), "Geist", "Inter", sans-serif;
   --font-mono: "Geist Mono", monospace;
+  --brand: 152 76% 52%;
+  --brand-foreground: 160 84% 39%;
 }
 
 @theme inline {
@@ -230,3 +234,12 @@ dark .landing-nav {
 .mask-radial { mask-image: radial-gradient(circle at center, black 30%, transparent 70%); }
 .mask-hero-grid { mask-image: radial-gradient(ellipse at center 0%, black 40%, transparent 100%); }
 .mask-waves { mask-image: radial-gradient(ellipse at center, black 50%, transparent 100%); }
+
+/* ── Hero appear animation delays ─────────────── */
+@layer utilities {
+  .delay-100  { animation-delay: 100ms; }
+  .delay-300  { animation-delay: 300ms; }
+  .delay-500  { animation-delay: 500ms; }
+  .delay-700  { animation-delay: 700ms; }
+  .delay-1000 { animation-delay: 1000ms; }
+}

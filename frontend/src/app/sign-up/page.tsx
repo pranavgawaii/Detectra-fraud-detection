@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Loader2, ArrowRight, Shield } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,22 +42,22 @@ export default function SignUpPage() {
       if (authError) throw authError;
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || "Failed to initiate enrollment. Please try again.");
+      setError(err.message || "Failed to create account. Please try again.");
       setLoading(false);
     }
   };
 
   const inputClass =
-    "w-full h-11 bg-white/[0.03] border border-neutral-800 rounded-xl px-4 text-[0.9rem] text-white placeholder:text-neutral-600 outline-none transition-all focus:border-neutral-600 focus:bg-white/[0.05] focus:ring-1 focus:ring-neutral-700";
+    "w-full h-11 bg-white/[0.03] border border-neutral-800/80 rounded-xl px-4 text-[0.85rem] text-white placeholder:text-neutral-600 outline-none transition-all focus:border-emerald-500/40 focus:bg-emerald-500/[0.02] focus:ring-1 focus:ring-emerald-500/20";
 
   return (
     <AuthShell
-      title="Create account"
+      title="Create your account"
       description={
         <>
-          Join the intelligence network. Already have an account?{" "}
-          <Link href="/login" className="text-white hover:text-neutral-300 font-semibold transition-all">
-            Sign in
+          Start detecting fraud in minutes.{" "}
+          <Link href="/login" className="text-emerald-500 hover:text-emerald-400 font-semibold transition-all">
+            Already have an account?
           </Link>
         </>
       }
@@ -67,9 +67,10 @@ export default function SignUpPage() {
           <AnimatePresence>
             {error && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-start gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10 text-red-400 text-[0.8rem] leading-relaxed"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="flex items-start gap-2.5 p-3 rounded-xl bg-red-500/[0.06] border border-red-500/10 text-red-400 text-[0.8rem] leading-relaxed"
               >
                 <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
                 {error}
@@ -77,121 +78,97 @@ export default function SignUpPage() {
             )}
           </AnimatePresence>
 
-          <div className="space-y-4">
-            {/* Role Picker */}
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">Account Type</label>
-              <div className="grid grid-cols-2 gap-2.5">
+          {/* Role Picker */}
+          <div className="space-y-2">
+            <label className="text-[0.7rem] font-semibold uppercase tracking-widest text-neutral-500 ml-0.5">Account Type</label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { key: "customer", label: "Policy Holder" },
+                { key: "company_admin", label: "Investigator" },
+              ].map((opt) => (
                 <button
+                  key={opt.key}
                   type="button"
-                  onClick={() => setRole("customer")}
+                  onClick={() => setRole(opt.key)}
                   className={`py-2.5 rounded-xl border text-[0.8rem] font-semibold transition-all ${
-                    role === "customer"
-                      ? "bg-white/[0.06] border-neutral-600 text-white"
-                      : "bg-white/[0.02] border-neutral-800 text-neutral-500 hover:bg-white/[0.04] hover:border-neutral-700"
+                    role === opt.key
+                      ? "bg-emerald-500/[0.08] border-emerald-500/30 text-emerald-400"
+                      : "bg-white/[0.02] border-neutral-800/60 text-neutral-500 hover:bg-white/[0.04] hover:border-neutral-700"
                   }`}
                 >
-                  Policy Holder
+                  {opt.label}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("company_admin")}
-                  className={`py-2.5 rounded-xl border text-[0.8rem] font-semibold transition-all ${
-                    role === "company_admin"
-                      ? "bg-white/[0.06] border-neutral-600 text-white"
-                      : "bg-white/[0.02] border-neutral-800 text-neutral-500 hover:bg-white/[0.04] hover:border-neutral-700"
-                  }`}
-                >
-                  Investigator
-                </button>
-              </div>
-            </div>
-
-            {/* Name */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">First Name</label>
-                <input
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Arjun"
-                  className={inputClass}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">Last Name</label>
-                <input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Khanna"
-                  className={inputClass}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Organization */}
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">Organization</label>
-              <input
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-                placeholder="NovaCover Insurance"
-                className={inputClass}
-                required
-              />
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">Work Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className={inputClass}
-                required
-              />
-            </div>
-
-            {/* Password */}
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">Password</label>
-              <div className="relative">
-                <input
-                  type={showPass ? "text" : "password"}
-                  value={pass}
-                  onChange={(e) => setPass(e.target.value)}
-                  placeholder="••••••••••••"
-                  className={`${inputClass} pr-12`}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-neutral-600 hover:text-neutral-300 transition-all"
-                >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
+              ))}
             </div>
           </div>
 
+          {/* Name */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="space-y-2">
+              <label className="text-[0.7rem] font-semibold uppercase tracking-widest text-neutral-500 ml-0.5">First Name</label>
+              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Arjun" className={inputClass} required />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[0.7rem] font-semibold uppercase tracking-widest text-neutral-500 ml-0.5">Last Name</label>
+              <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Khanna" className={inputClass} required />
+            </div>
+          </div>
+
+          {/* Organization */}
+          <div className="space-y-2">
+            <label className="text-[0.7rem] font-semibold uppercase tracking-widest text-neutral-500 ml-0.5">Organization</label>
+            <input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="NovaCover Insurance" className={inputClass} required />
+          </div>
+
+          {/* Email */}
+          <div className="space-y-2">
+            <label className="text-[0.7rem] font-semibold uppercase tracking-widest text-neutral-500 ml-0.5">Work Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" className={inputClass} required />
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <label className="text-[0.7rem] font-semibold uppercase tracking-widest text-neutral-500 ml-0.5">Password</label>
+            <div className="relative">
+              <input
+                type={showPass ? "text" : "password"}
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                placeholder="Minimum 8 characters"
+                className={`${inputClass} pr-11`}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(!showPass)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-neutral-600 hover:text-neutral-300 transition-colors"
+              >
+                {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-white text-neutral-900 font-semibold text-[0.9rem] rounded-xl transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 mt-2 shadow-[0_0_15px_rgba(255,255,255,0.06)]"
+            className="group w-full h-11 mt-1 bg-emerald-600 text-white font-semibold text-[0.85rem] rounded-xl transition-all hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(5,150,105,0.2)]"
           >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : "Create account"}
+            {loading ? (
+              <Loader2 size={17} className="animate-spin" />
+            ) : (
+              <>
+                Create account
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </>
+            )}
           </button>
         </form>
 
-        <div className="text-center">
-          <p className="text-[0.65rem] text-neutral-600 uppercase tracking-widest font-medium">
-            Protected by Detectra Sentinel
-          </p>
+        {/* Security badge */}
+        <div className="flex items-center justify-center gap-1.5 pt-1 text-[0.6rem] text-neutral-700">
+          <Shield size={10} />
+          <span>Protected by Detectra Sentinel</span>
         </div>
       </div>
     </AuthShell>

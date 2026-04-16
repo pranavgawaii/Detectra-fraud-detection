@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: [
@@ -12,6 +13,9 @@ const config: Config = {
         // var(--font-outfit) is injected by next/font/google; nb-architekt loads from public/fonts/
         sans: ["nb-architekt", "var(--font-outfit)", "Outfit", "sans-serif"],
         mono: ["monospace"],
+      },
+      maxWidth: {
+        container: "1248px",
       },
       colors: {
         // Map CSS custom properties so Tailwind classes use the theme
@@ -33,6 +37,8 @@ const config: Config = {
         sidebar:     "var(--sidebar)",
         // Static brand tokens used in hardcoded component classes
         brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
           green:    "#72e3ad",
           navy:     "#0F1E3C",
           navytext: "#1B2A4A",
@@ -48,8 +54,32 @@ const config: Config = {
       boxShadow: {
         card: "0px 1px 3px rgba(0,0,0,0.17)",
       },
+      keyframes: {
+        appear: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "appear-zoom": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+      },
+      animation: {
+        appear: "appear 0.5s ease-out forwards",
+        "appear-zoom": "appear-zoom 0.5s ease-out forwards",
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".fade-bottom": {
+          "mask-image": "linear-gradient(to bottom, black 60%, transparent 100%)",
+          "-webkit-mask-image": "linear-gradient(to bottom, black 60%, transparent 100%)",
+        },
+      });
+    }),
+  ],
 };
 export default config;
+

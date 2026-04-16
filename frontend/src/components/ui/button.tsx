@@ -18,6 +18,7 @@ const buttonVariants = cva(
           "bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]/80",
         ghost: "hover:bg-white/10 hover:text-white text-white/70",
         link: "text-white underline-offset-4 hover:underline",
+        glow: "bg-white/10 text-white border border-white/15 hover:bg-white/15 shadow-[0_0_20px_rgba(5,150,105,0.15)] hover:shadow-[0_0_30px_rgba(5,150,105,0.25)] transition-all",
       },
       size: {
         default: "h-10 px-4 py-2",
