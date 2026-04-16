@@ -71,6 +71,8 @@ export default function DashboardPage() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [useVoiceAI, setUseVoiceAI] = useState(true);
 
+  const [claims, setClaims] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchSessionAndRole = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -79,25 +81,41 @@ export default function DashboardPage() {
         return;
       }
 
+      // 1. Fetch Role
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
       
-      let assignedRole = user.user_metadata?.role || "customer"; // Fallback to the signup metadata!
+      let assignedRole = user.user_metadata?.role || "customer"; 
       if (profile && profile.role) {
         assignedRole = profile.role;
       } else if (user.email) {
-        // Strict demo override
         if (user.email.includes("admin") || user.email.includes("staff") || user.email.includes("demo")) {
           assignedRole = "company_admin";
         }
       }
       setRole(assignedRole);
+
+      // 2. Fetch Real Claims from Supabase
+      const { data: realClaims, error: claimsError } = await supabase
+        .from('claims')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (realClaims && realClaims.length > 0) {
+        setClaims(realClaims);
+        setSelectedClaim(realClaims[0]);
+        analyzeClaim(realClaims[0]);
+      } else {
+        // Fallback to mock if table is empty
+        setClaims(mockClaims);
+        setSelectedClaim(mockClaims[0]);
+        analyzeClaim(mockClaims[0]);
+      }
       
       setChartsReady(true);
-      analyzeClaim(mockClaims[0]);
     };
     
     fetchSessionAndRole();
@@ -215,10 +233,10 @@ export default function DashboardPage() {
     }
   };
 
-  const filteredClaims = (mockClaims || []).filter(
+  const filteredClaims = (claims || []).filter(
     (c) =>
-      c.id.toLowerCase().includes((query || "").toLowerCase()) ||
-      c.claimant.toLowerCase().includes((query || "").toLowerCase())
+      c.claimant?.toLowerCase().includes(query.toLowerCase()) ||
+      c.id?.toLowerCase().includes(query.toLowerCase())
   );
 
   const metrics = [
@@ -315,12 +333,12 @@ export default function DashboardPage() {
            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
              <div>
                 <span className="text-[0.65rem] font-bold uppercase tracking-widest mb-2 block" style={{ color: "var(--primary)" }}>Active Investigation</span>
-                <p className="text-[1.3rem] font-bold text-[var(--foreground)]">{mockClaims[0].type}</p>
-                <p className="text-[0.8rem] text-[var(--muted-foreground)] mt-1">Claim ID: {mockClaims[0].id} &bull; Filed on {mockClaims[0].processed}</p>
+                <p className="text-[1.3rem] font-bold text-[var(--foreground)]">{selectedClaim?.type}</p>
+                <p className="text-[0.8rem] text-[var(--muted-foreground)] mt-1">Claim ID: {selectedClaim?.id} &bull; Filed on {selectedClaim?.processed}</p>
              </div>
              <div className="sm:text-right px-4 py-3 rounded-xl" style={{ background: "var(--muted)", border: "1px solid var(--border)" }}>
                 <p className="text-[0.7rem] font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">Expected Payout</p>
-                <p className="text-[1.5rem] font-black text-[var(--foreground)] leading-none">{mockClaims[0].amount}</p>
+                <p className="text-[1.5rem] font-black text-[var(--foreground)] leading-none">{selectedClaim?.amount}</p>
              </div>
            </div>
 
