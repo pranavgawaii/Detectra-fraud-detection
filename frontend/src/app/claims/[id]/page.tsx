@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import Link from "next/link";
 import { ChevronRight, AlertTriangle, FileText, CheckCircle2, Clock } from "lucide-react";
 
@@ -37,7 +37,7 @@ const severityStyle = (s: string) => {
 
 export default function ClaimDetailPage() {
   return (
-    <AppShell>
+    <>
       <div className="flex gap-5">
         {/* Main */}
         <div className="flex-1 min-w-0 flex flex-col gap-5">
@@ -206,6 +206,6 @@ export default function ClaimDetailPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

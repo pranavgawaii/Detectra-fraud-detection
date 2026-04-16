@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { useEffect, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -99,7 +99,7 @@ export default function AnalyticsPage() {
   }, []);
 
   return (
-    <AppShell>
+    <>
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div className="flex items-end justify-between pt-1.5">
@@ -261,6 +261,6 @@ export default function AnalyticsPage() {
           </table>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { ArrowLeft, Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -46,7 +46,7 @@ export default function NewRulePage() {
   const selectStyle: React.CSSProperties = { ...inputStyle };
 
   return (
-    <AppShell>
+    <>
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
         <Link
@@ -245,6 +245,6 @@ export default function NewRulePage() {
           </button>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

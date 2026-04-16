@@ -35,6 +35,18 @@ export default function LoginPage() {
     }
   };
 
+  const handleDemoLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmail("demo@detectra.in");
+    setPass("••••••••");
+    setLoading(true);
+    setError("");
+
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 800);
+  };
+
   return (
     <AuthShell
       title="Welcome back"
@@ -134,13 +146,23 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button
-            type="submit" 
-            disabled={loading}
-            className="w-full h-12 bg-white text-black font-bold text-[0.9rem] rounded-xl transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 mt-4"
-          >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : "Sign in to Detectra"}
-          </button>
+          <div className="space-y-2 mt-4">
+            <button
+              type="submit" 
+              disabled={loading}
+              className="w-full h-12 bg-white text-black font-bold text-[0.9rem] rounded-xl transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+            >
+              {loading ? <Loader2 size={18} className="animate-spin" /> : "Sign in to Detectra"}
+            </button>
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              disabled={loading}
+              className="w-full h-12 bg-[#0A0A0A] text-neutral-300 border border-white/[0.08] font-bold text-[0.9rem] rounded-xl transition-all hover:bg-white/[0.05] hover:text-white active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+            >
+              Access Demo Environment
+            </button>
+          </div>
         </form>
       </div>
     </AuthShell>

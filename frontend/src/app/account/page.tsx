@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { 
   User, Mail, Phone, ShieldCheck, Bell, 
   Key, LogOut, ChevronRight, Fingerprint, 
@@ -17,7 +17,7 @@ export default function AccountPage() {
   };
 
   return (
-    <AppShell>
+    <>
       <div className="max-w-[1000px] mx-auto py-8 px-4 flex flex-col gap-8">
         
         {/* Header Section */}
@@ -202,6 +202,6 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

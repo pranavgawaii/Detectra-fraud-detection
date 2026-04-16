@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { Plus, Search, Filter, ChevronDown, Zap, AlertTriangle, CheckCircle2, Clock4, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
@@ -72,7 +72,7 @@ export default function RulesPage() {
   const active = rules.filter(r => r.status === "Active").length;
 
   return (
-    <AppShell>
+    <>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-[1.35rem] font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
@@ -185,6 +185,6 @@ export default function RulesPage() {
           </tbody>
         </table>
       </div>
-    </AppShell>
+    </>
   );
 }

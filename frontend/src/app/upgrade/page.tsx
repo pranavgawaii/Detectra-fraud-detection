@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { Check, Zap, Shield, Activity, BarChart2, Users, Sparkles, ArrowRight } from "lucide-react";
 
 const plans = [
@@ -67,7 +67,7 @@ const proFeatures = [
 
 export default function UpgradePage() {
   return (
-    <AppShell>
+    <>
       {/* Hero */}
       <div className="mb-10 text-center">
         <div
@@ -213,6 +213,6 @@ export default function UpgradePage() {
           </button>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

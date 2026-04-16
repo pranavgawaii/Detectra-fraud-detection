@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { HelpCircle, MessageCircle, FileText, ExternalLink, ChevronRight, Search } from "lucide-react";
 
 const faqs = [
@@ -23,7 +23,7 @@ const docs = [
 
 export default function HelpPage() {
   return (
-    <AppShell>
+    <>
       <div className="mb-6">
         <h1 className="text-[1.35rem] font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
           Help Center
@@ -141,6 +141,6 @@ export default function HelpPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

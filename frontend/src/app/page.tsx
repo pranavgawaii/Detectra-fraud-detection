@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react';
 import { Search, Target, Users } from 'lucide-react';
-import { LandingHeader } from '@/components/landing/LandingHeader';
+import { LandingHeader, LandingFooter, PhilosophyCard } from '@/components/landing/LandingComponents';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { FeatureGrid } from '@/components/landing/FeatureGrid';
-import { LandingFooter } from '@/components/landing/LandingFooter';
 
 /**
  * Detectra Landing Page
@@ -73,14 +72,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-const PhilosophyCard = ({ icon, label, title, content }: any) => (
-  <div className="flex flex-col">
-    <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-      {icon}
-      {label}
-    </h3>
-    <h4 className="text-2xl font-normal tracking-tight mb-3 leading-snug text-white">{title}</h4>
-    <p className="text-base leading-relaxed text-neutral-400 mt-2">{content}</p>
-  </div>
-);

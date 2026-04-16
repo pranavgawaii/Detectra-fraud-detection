@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import Link from "next/link";
 import { Search, Plus, SlidersHorizontal, ChevronDown, ShieldX, CheckCircle2, Clock4, Eye } from "lucide-react";
 
@@ -50,7 +50,7 @@ const headers = ["", "Claim ID", "Claimant", "Type", "Amount", "Risk", "Status",
 
 export default function ClaimsPage() {
   return (
-    <AppShell>
+    <>
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div className="flex items-end justify-between pt-1.5">
@@ -207,6 +207,6 @@ export default function ClaimsPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { Bell, Check, AlertTriangle, Info, ShieldX, CheckCircle2 } from "lucide-react";
 
 const notifications = [
@@ -58,7 +58,7 @@ export default function NotificationsPage() {
   const unread = notifications.filter(n => !n.read).length;
 
   return (
-    <AppShell>
+    <>
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -146,6 +146,6 @@ export default function NotificationsPage() {
           </div>
         ))}
       </div>
-    </AppShell>
+    </>
   );
 }

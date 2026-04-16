@@ -1,6 +1,6 @@
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
+
 import { useState } from "react";
 import { ChevronRight, AlertTriangle, CheckCircle2, Loader2, FileText } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +36,7 @@ export default function SubmitClaimPage() {
   };
 
   return (
-    <AppShell>
+    <>
       <div className="flex flex-col gap-5">
         {/* Header */}
         <div className="flex items-end justify-between pt-1.5">
@@ -259,6 +259,6 @@ export default function SubmitClaimPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

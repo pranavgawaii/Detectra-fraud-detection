@@ -28,6 +28,7 @@ export const metadata: Metadata = {
 
 import { ChatProvider } from "@/components/providers/ChatProvider";
 import { Analytics } from "@vercel/analytics/react";
+import AppShell from "@/components/layout/AppShell";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geist.className} antialiased`}>
         <ThemeProvider>
           <ChatProvider>
-            {children}
+            <AppShell>
+              {children}
+            </AppShell>
             <Analytics />
           </ChatProvider>
         </ThemeProvider>
