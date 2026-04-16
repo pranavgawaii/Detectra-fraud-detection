@@ -35,20 +35,28 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = (demoType: string) => {
+  const handleDemoLogin = async (demoType: string) => {
     let targetEmail = "demo@detectra.in";
     if (demoType === 'admin') targetEmail = "admin@detectra.in";
     else if (demoType === 'staff') targetEmail = "staff@detectra.in";
     else if (demoType === 'customer') targetEmail = "customer@detectra.in";
 
-    setEmail(targetEmail);
-    setPass("••••••••");
     setLoading(true);
     setError("");
 
-    setTimeout(() => {
+    try {
+      // We actually perform a real login so the Dashboard session check passes
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: targetEmail,
+        password: "detectra123", // Standard demo password
+      });
+
+      if (authError) throw authError;
       router.push("/dashboard");
-    }, 800);
+    } catch (err: any) {
+      setError("Demo account login failed. Ensure " + targetEmail + " exists in Supabase with password 'detectra123'.");
+      setLoading(false);
+    }
   };
 
   return (
