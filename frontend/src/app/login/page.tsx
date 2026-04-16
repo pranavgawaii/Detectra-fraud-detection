@@ -59,28 +59,31 @@ export default function LoginPage() {
     }
   };
 
+  const inputClass =
+    "w-full h-12 bg-white/[0.03] border border-neutral-800 rounded-xl px-4 text-[0.9rem] text-white placeholder:text-neutral-600 outline-none transition-all focus:border-neutral-600 focus:bg-white/[0.05] focus:ring-1 focus:ring-neutral-700";
+
   return (
     <AuthShell
       title="Welcome back"
       description={
         <>
           Access your fraud intelligence dashboard. No account?{" "}
-          <Link href="/sign-up" className="text-[var(--primary)] hover:text-[var(--primary)]/80 font-bold transition-all">
-            Secure clearance
+          <Link href="/sign-up" className="text-white hover:text-neutral-300 font-semibold transition-all">
+            Create one
           </Link>
         </>
       }
     >
-      <div className="space-y-6 pt-2">
+      <div className="space-y-5 pt-1">
         <form onSubmit={handleLogin} className="space-y-4">
           <AnimatePresence>
             {error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[0.8rem]"
+                className="flex items-start gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10 text-red-400 text-[0.8rem] leading-relaxed"
               >
-                <AlertCircle size={14} />
+                <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
                 {error}
               </motion.div>
             )}
@@ -88,35 +91,35 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[0.65rem] font-bold uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
+              <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500 ml-1">Email Address</label>
               <input
-                type="email" 
-                value={email} 
+                type="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com" 
-                className="w-full h-12 bg-white border border-slate-200 rounded-xl px-4 text-[0.9rem] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[var(--primary)]/10"
+                placeholder="name@company.com"
+                className={inputClass}
                 required
               />
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <label className="text-[0.65rem] font-bold uppercase tracking-widest text-slate-500">Security Key</label>
-                <Link href="#" className="text-[0.6rem] font-bold text-[var(--primary)] hover:text-[var(--primary)]/80 transition-colors uppercase tracking-widest">Forgot?</Link>
+                <label className="text-[0.65rem] font-bold uppercase tracking-widest text-neutral-500">Password</label>
+                <Link href="#" className="text-[0.6rem] font-bold text-neutral-500 hover:text-white transition-colors uppercase tracking-widest">Forgot?</Link>
               </div>
               <div className="relative">
                 <input
-                  type={showPass ? "text" : "password"} 
-                  value={pass} 
+                  type={showPass ? "text" : "password"}
+                  value={pass}
                   onChange={(e) => setPass(e.target.value)}
-                  placeholder="••••••••••••" 
-                  className="w-full h-12 bg-white border border-slate-200 rounded-xl px-4 pr-12 text-[0.9rem] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[var(--primary)]/10"
+                  placeholder="••••••••••••"
+                  className={`${inputClass} pr-12`}
                   required
                 />
                 <button
-                  type="button" 
+                  type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 transition-all"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-neutral-600 hover:text-neutral-300 transition-all"
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -124,23 +127,23 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="space-y-4 mt-6">
+          <div className="space-y-4 mt-2">
             <button
-              type="submit" 
+              type="submit"
               disabled={loading}
-              className="w-full h-12 bg-[var(--primary)] text-white font-bold text-[0.9rem] rounded-xl transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full h-12 bg-white text-neutral-900 font-semibold text-[0.9rem] rounded-xl transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.06)]"
             >
-              {loading ? <Loader2 size={18} className="animate-spin" /> : "Sign in to Detectra"}
+              {loading ? <Loader2 size={18} className="animate-spin" /> : "Sign in"}
             </button>
 
-            <div className="pt-5 border-t border-slate-100">
-              <p className="text-[0.6rem] font-bold uppercase tracking-widest text-slate-500 mb-3 text-center">Quick Demo Environments</p>
+            <div className="pt-5 border-t border-neutral-800/60">
+              <p className="text-[0.6rem] font-bold uppercase tracking-widest text-neutral-600 mb-3 text-center">Quick Demo Access</p>
               <div className="grid grid-cols-1 gap-2">
                 <button
                   type="button"
                   onClick={() => handleDemoLogin("admin")}
                   disabled={loading}
-                  className="w-full h-10 bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[0.8rem] rounded-xl transition-all hover:bg-slate-100 hover:border-slate-300 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center"
+                  className="w-full h-10 bg-white/[0.03] border border-neutral-800 text-neutral-400 font-semibold text-[0.8rem] rounded-xl transition-all hover:bg-white/[0.06] hover:border-neutral-700 hover:text-white active:scale-[0.98] disabled:opacity-50 flex items-center justify-center"
                 >
                   Admin Command Center
                 </button>
@@ -149,17 +152,17 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => handleDemoLogin("staff")}
                     disabled={loading}
-                    className="w-full h-10 bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[0.8rem] rounded-xl transition-all hover:bg-slate-100 hover:border-slate-300 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center"
+                    className="w-full h-10 bg-white/[0.03] border border-neutral-800 text-neutral-400 font-semibold text-[0.8rem] rounded-xl transition-all hover:bg-white/[0.06] hover:border-neutral-700 hover:text-white active:scale-[0.98] disabled:opacity-50 flex items-center justify-center"
                   >
-                    Investigator Staff
+                    Investigator
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDemoLogin("customer")}
                     disabled={loading}
-                    className="w-full h-10 bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[0.8rem] rounded-xl transition-all hover:bg-slate-100 hover:border-slate-300 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center"
+                    className="w-full h-10 bg-white/[0.03] border border-neutral-800 text-neutral-400 font-semibold text-[0.8rem] rounded-xl transition-all hover:bg-white/[0.06] hover:border-neutral-700 hover:text-white active:scale-[0.98] disabled:opacity-50 flex items-center justify-center"
                   >
-                    Customer Portal
+                    Customer
                   </button>
                 </div>
               </div>

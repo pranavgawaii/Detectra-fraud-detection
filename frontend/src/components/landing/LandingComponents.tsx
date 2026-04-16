@@ -5,72 +5,83 @@ import Link from 'next/link';
 import { Menu, X, ArrowRight, MapPin, Mail, Search, Target, Users, ChevronDown } from 'lucide-react';
 import BrandLogo from '@/components/branding/BrandLogo';
 
-// ── Header (Premium) ────────────────────────────────────────────
+// ── Header (Premium SaaS) ────────────────────────────────────────
 export const LandingHeader = ({ menuState, setMenuState }: { menuState: boolean, setMenuState: (s: boolean) => void }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? 'border-b border-neutral-800/70 bg-[#0A0A0A]/95 backdrop-blur-2xl shadow-2xl shadow-black/40' : 'bg-transparent'}`}>
-      <div className="flex h-16 max-w-7xl mx-auto px-4 sm:px-6 items-center justify-between">
-
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-          <BrandLogo size="sm" priority />
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1 text-sm">
-          {[
-            { label: 'Features', href: '#features' },
-            { label: 'How it Works', href: '#how-it-works' },
-            { label: 'Philosophy', href: '#philosophy' },
-            { label: 'Pricing', href: '#pricing' },
-          ].map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-all duration-200 font-medium"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-neutral-400 hover:text-white transition-colors px-3 py-1.5"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="#contact"
-            className="text-sm font-semibold px-5 py-2 rounded-full bg-white text-black hover:bg-neutral-200 active:scale-95 transition-all duration-200 shadow-md"
-          >
-            Request Demo →
-          </Link>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setMenuState(!menuState)}
-          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all"
-          aria-label="Toggle menu"
+    <header className="fixed top-0 inset-x-0 z-50 transition-all duration-700">
+      {/* Outer container that adds padding when scrolled to create pill effect */}
+      <div className={`transition-all duration-700 ${scrolled ? 'pt-3 px-4 sm:px-6' : 'pt-0 px-0'}`}>
+        <div
+          className={`max-w-7xl mx-auto transition-all duration-700 ${
+            scrolled
+              ? 'bg-neutral-950/70 backdrop-blur-2xl border border-neutral-800/60 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.03)]'
+              : 'bg-transparent border border-transparent'
+          }`}
         >
-          {menuState ? <X size={18} /> : <Menu size={18} />}
-        </button>
+          <div className="flex h-14 px-4 sm:px-6 items-center justify-between">
+
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
+              <BrandLogo size="sm" priority />
+            </Link>
+
+            {/* Desktop Nav - centered */}
+            <nav className="hidden md:flex items-center gap-0.5 bg-neutral-900/50 border border-neutral-800/40 rounded-xl px-1 py-0.5">
+              {[
+                { label: 'Features', href: '#features' },
+                { label: 'How it Works', href: '#how-it-works' },
+                { label: 'Philosophy', href: '#philosophy' },
+                { label: 'Pricing', href: '#pricing' },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="px-3.5 py-1.5 rounded-lg text-[0.8rem] text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-all duration-200 font-medium"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Desktop CTA */}
+            <div className="hidden md:flex items-center gap-2.5">
+              <Link
+                href="/login"
+                className="text-[0.8rem] font-medium text-neutral-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/[0.04]"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="#contact"
+                className="text-[0.8rem] font-semibold px-4 py-2 rounded-xl bg-white text-neutral-900 hover:bg-neutral-200 active:scale-[0.97] transition-all duration-200 shadow-[0_0_10px_rgba(255,255,255,0.08)]"
+              >
+                Get started
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMenuState(!menuState)}
+              className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg border border-neutral-800 text-neutral-400 hover:text-white hover:bg-white/[0.05] transition-all"
+              aria-label="Toggle menu"
+            >
+              {menuState ? <X size={16} /> : <Menu size={16} />}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Mobile Drawer */}
-      {menuState && (
-        <div className="md:hidden border-t border-neutral-800 bg-[#0A0A0A]/98 backdrop-blur-2xl absolute w-full left-0 py-6 px-6 flex flex-col gap-1 shadow-2xl">
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuState ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="mx-4 mt-2 border border-neutral-800/60 bg-neutral-950/95 backdrop-blur-2xl rounded-2xl py-4 px-4 flex flex-col gap-0.5 shadow-2xl">
           {[
             { label: 'Features', href: '#features' },
             { label: 'How it Works', href: '#how-it-works' },
@@ -81,29 +92,29 @@ export const LandingHeader = ({ menuState, setMenuState }: { menuState: boolean,
               key={item.label}
               href={item.href}
               onClick={() => setMenuState(false)}
-              className="text-neutral-300 hover:text-white hover:bg-white/5 px-3 py-3 rounded-lg font-medium transition-all text-base"
+              className="text-neutral-300 hover:text-white hover:bg-white/[0.05] px-3 py-2.5 rounded-xl font-medium transition-all text-[0.9rem]"
             >
               {item.label}
             </Link>
           ))}
-          <div className="mt-4 pt-4 border-t border-neutral-800 flex flex-col gap-3">
+          <div className="mt-3 pt-3 border-t border-neutral-800/60 flex flex-col gap-2">
             <Link
               href="/login"
               onClick={() => setMenuState(false)}
-              className="text-neutral-400 hover:text-white px-3 py-2.5 rounded-lg font-medium text-base text-center border border-neutral-800 hover:bg-white/5 transition-all"
+              className="text-neutral-400 hover:text-white px-3 py-2.5 rounded-xl font-medium text-[0.9rem] text-center border border-neutral-800 hover:bg-white/[0.04] transition-all"
             >
               Sign in
             </Link>
             <Link
               href="#contact"
               onClick={() => setMenuState(false)}
-              className="text-black font-semibold text-base text-center py-3 rounded-full bg-white hover:bg-neutral-200 transition-all shadow-md"
+              className="text-neutral-900 font-semibold text-[0.9rem] text-center py-3 rounded-xl bg-white hover:bg-neutral-200 transition-all"
             >
-              Request Demo →
+              Get started →
             </Link>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 };
