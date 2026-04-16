@@ -91,19 +91,25 @@ export const HeroSection = () => {
         <span className="hidden sm:flex items-center gap-1.5">Setup in 5 minutes</span>
       </motion.div>
 
-      {/* Dashboard Preview with Green Glow */}
+      {/* Dashboard Preview with Warm Glow */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.5 }}
         className="relative w-full max-w-5xl mx-auto mt-0"
       >
-        {/* Green glow behind dashboard */}
+        {/* Warm amber glow — outer layer */}
         <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/3 w-[80%] h-[400px] pointer-events-none z-0"
+          className="absolute left-1/2 -translate-x-1/2 -top-[80px] w-[90%] h-[500px] pointer-events-none z-0"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(5,150,105,0.15) 0%, rgba(5,150,105,0.05) 40%, transparent 70%)',
-            filter: 'blur(40px)',
+            background: 'radial-gradient(ellipse 70% 50% at 50% 40%, rgba(245,158,11,0.18) 0%, rgba(217,119,6,0.08) 35%, transparent 70%)',
+          }}
+        />
+        {/* Green/teal core glow — inner layer */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 -top-[40px] w-[70%] h-[400px] pointer-events-none z-0"
+          style={{
+            background: 'radial-gradient(ellipse 60% 45% at 50% 30%, rgba(5,150,105,0.12) 0%, rgba(16,185,129,0.05) 40%, transparent 65%)',
           }}
         />
         <div className="relative z-10">
