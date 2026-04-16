@@ -98,18 +98,18 @@ export const HeroSection = () => {
         transition={{ duration: 0.7, delay: 0.5 }}
         className="relative w-full max-w-5xl mx-auto mt-0"
       >
-        {/* Green glow — outer layer */}
+        {/* Vibrant Emerald glow — outer layer */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 -top-[200px] w-[100%] h-[600px] pointer-events-none z-0"
+          className="absolute left-1/2 -translate-x-1/2 -top-[200px] w-[100%] h-[600px] pointer-events-none z-0 opacity-80"
           style={{
-            background: 'radial-gradient(ellipse 70% 50% at 50% 40%, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 35%, transparent 70%)',
+            background: 'radial-gradient(ellipse 70% 50% at 50% 40%, rgba(52, 211, 153, 0.3) 0%, rgba(16, 185, 129, 0.1) 45%, transparent 80%)',
           }}
         />
-        {/* Green core glow — inner layer */}
+        {/* Lighter Emerald core — inner layer */}
         <div
           className="absolute left-1/2 -translate-x-1/2 -top-[140px] w-[70%] h-[450px] pointer-events-none z-0"
           style={{
-            background: 'radial-gradient(ellipse 60% 45% at 50% 30%, rgba(52,211,153,0.15) 0%, rgba(16,185,129,0.06) 40%, transparent 65%)',
+            background: 'radial-gradient(ellipse 60% 45% at 50% 30%, rgba(110, 231, 183, 0.35) 0%, rgba(52, 211, 153, 0.1) 40%, transparent 75%)',
           }}
         />
         <div className="relative z-10">
