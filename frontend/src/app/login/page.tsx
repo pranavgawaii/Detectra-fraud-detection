@@ -48,13 +48,13 @@ export default function LoginPage() {
       // We actually perform a real login so the Dashboard session check passes
       const { error: authError } = await supabase.auth.signInWithPassword({
         email: targetEmail,
-        password: "detectra123", // Standard demo password
+        password: "Detectra@123", // Standard demo password
       });
 
       if (authError) throw authError;
       router.push("/dashboard");
     } catch (err: any) {
-      setError("Demo account login failed. Ensure " + targetEmail + " exists in Supabase with password 'detectra123'.");
+      setError("Demo account login failed. Ensure " + targetEmail + " exists in Supabase with password 'Detectra@123'.");
       setLoading(false);
     }
   };
