@@ -35,7 +35,7 @@ const toneStyles = {
     labelStyle: { color: "#FFFFFF" },
   },
   dark: {
-    labelStyle: { color: "#f8fafc" },
+    labelStyle: { color: "#0F172A" },
   },
 } as const;
 
