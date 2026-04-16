@@ -312,10 +312,10 @@ export default function DashboardPage() {
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-[1.6rem] font-bold tracking-tight text-[var(--foreground)]">
-              Welcome to Detectra
+              Policy Dashboard
             </h1>
             <p className="text-[0.85rem] text-[var(--muted-foreground)] mt-1">
-              Manage your policies and track your recent claims.
+              Active Coverage: <span className="text-[var(--primary)] font-bold">Standard Plus</span> &bull; Account Verified
             </p>
           </div>
           <Link
@@ -384,7 +384,7 @@ export default function DashboardPage() {
     );
   }
 
-  const activeMetrics = metrics;
+  const activeMetrics = isInternal ? metrics : customerMetrics;
 
   return (
     <>

@@ -82,12 +82,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
       if (user) {
+        // Fallback for demo users based on email
+        if (user.email?.includes("admin")) setRole("company_admin");
+        else if (user.email?.includes("staff")) setRole("employee_admin");
+
         supabase
           .from('profiles')
           .select('role')
           .eq('id', user.id)
           .single()
-          .then(({ data }) => data && setRole(data.role));
+          .then(({ data }) => {
+            if (data?.role) setRole(data.role);
+          });
       }
     });
   }, []);
@@ -197,15 +203,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ══ MAIN AREA ════════════════════════════════════════ */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex items-center justify-between px-6 bg-[var(--background)]/80 backdrop-blur-xl border-b border-[var(--border)]" style={{ minHeight: 60 }}>
-          <div className="flex flex-1 items-center max-w-md">
+        <header className="sticky top-0 z-[100] flex items-center justify-between px-6 bg-[var(--background)]/80 backdrop-blur-xl border-b border-[var(--border)]" style={{ minHeight: 60 }}>
+          <div className="flex flex-1 items-center max-w-md z-0">
             <div className="relative w-full group">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
               <input type="text" placeholder="Search..." className="w-full rounded-xl border border-[var(--border)] bg-[var(--card)] py-2 pl-9 pr-4 text-[0.78rem] outline-none text-[var(--foreground)]" />
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 relative z-10">
             <div className="flex items-center bg-[var(--muted)] p-1 rounded-xl border border-[var(--border)]">
               <button onClick={() => theme !== "light" && toggle()} className={`p-1.5 rounded-lg ${!isDark ? "bg-[var(--card)] text-[var(--primary)]" : "text-[var(--muted-foreground)]"}`}><Sun size={14} /></button>
               <button onClick={() => theme !== "dark" && toggle()} className={`p-1.5 rounded-lg ${isDark ? "bg-[var(--card)] text-[var(--primary)]" : "text-[var(--muted-foreground)]"}`}><Moon size={14} /></button>
@@ -215,7 +221,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <MenuTrigger>
                 <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold text-[0.75rem] transition-transform active:scale-95 cursor-pointer hover:opacity-90">{initials}</div>
               </MenuTrigger>
-              <MenuPopup align="end" className="w-56 mt-2 relative z-[9999]">
+              <MenuPopup align="end" className="w-56 mt-2">
                 <div className="px-3 py-2.5 mb-1 bg-[var(--muted)]/50 rounded-lg mx-1">
                   <p className="text-[0.75rem] font-bold text-[var(--foreground)] truncate">{displayName}</p>
                   <p className="text-[0.65rem] text-[var(--muted-foreground)] truncate">{roleLabel}</p>
