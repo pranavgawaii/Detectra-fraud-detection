@@ -2,7 +2,7 @@
 
 import AppShell from "@/components/layout/AppShell";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid,
@@ -19,6 +19,7 @@ import { ShiningText } from "@/components/ui/shining-text";
 import { Card } from "@/components/ui/card";
 import { riskChip, StatusBadge } from "@/components/dashboard/StatusBadge";
 import { mockClaims, monthlyData, fraudSignals } from "@/data/dashboard";
+import { api, type ChatRequest, type ScoreResponse } from "@/lib/api";
 
 /* ── Helpers ──────────────────────────────────────────────── */
 function BarTooltip({ active, payload, label }: any) {
@@ -45,21 +46,54 @@ export default function DashboardPage() {
   const { isThinking, setIsThinking } = useChat();
   const [chatValue, setChatValue] = useState("");
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  // Persists conversation history across multi-turn chat (per dashboard session)
+  const conversationHistory = useRef<{ role: string; content: string }[]>([]);
+  // Placeholder score context — replace with real scored claim when wiring /claims page
+  const activeClaim = useRef<ScoreResponse | null>(null);
 
   useEffect(() => { setChartsReady(true); }, []);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chatValue.trim()) return;
-    
+    const msg = chatValue.trim();
+    if (!msg) return;
+
     setAiResponse(null);
     setChatValue("");
     setIsThinking(true);
-    
-    setTimeout(() => {
+
+    try {
+      const req: ChatRequest = {
+        // Use the active scored claim if available; otherwise send an empty shell
+        // so Sarvam still responds (it will ask for a specific claim to analyse).
+        score_response: (activeClaim.current ?? {
+          fraud_score: 0,
+          risk_score_100: 0,
+          risk_tier: "LOW",
+          recommended_action: "N/A",
+          explanation: [],
+          sarvam_summary: "",
+        }) as ScoreResponse,
+        user_message: msg,
+        conversation_history: conversationHistory.current,
+        language: "en-IN",
+      };
+
+      const res = await api.sarvamChat(req);
+
+      // Append both turns so the next call has full context
+      conversationHistory.current = [
+        ...conversationHistory.current,
+        { role: "user",      content: msg },
+        { role: "assistant", content: res.reply },
+      ];
+
+      setAiResponse(res.reply);
+    } catch (err) {
+      setAiResponse(`⚠️ Could not reach the DETECTRA backend. Make sure the FastAPI server is running on http://localhost:8000. (${(err as Error).message})`);
+    } finally {
       setIsThinking(false);
-      setAiResponse("I've successfully analyzed the requested claims. My engine detected a slight spike in 'Narrative Inconsistency' within the current batch (#CLM-2047, #CLM-2051), though no immediate fraud is confirmed. I recommend further manual review for these specific files.");
-    }, 3000);
+    }
   };
 
   const filteredClaims = mockClaims.filter(
