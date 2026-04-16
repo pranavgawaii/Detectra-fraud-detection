@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 import { ChatProvider } from "@/components/providers/ChatProvider";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 import AppShell from "@/components/layout/AppShell";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
