@@ -56,10 +56,10 @@ export default function SubmitClaimPage() {
   const [email,       setEmail]       = useState("");
 
   /* ── Form state: required model fields ── */
-  const [insuranceType,    setInsuranceType]    = useState("Auto");
+  const [insuranceType,    setInsuranceType]    = useState("Motor");
   const [claimAmount,      setClaimAmount]      = useState("");
   const [premiumAmount,    setPremiumAmount]    = useState("");
-  const [incidentSeverity, setIncidentSeverity] = useState("Minor Damage");
+  const [incidentSeverity, setIncidentSeverity] = useState("Minor Loss");
   const [lossDt,           setLossDt]           = useState("");
   const [reportDt,         setReportDt]         = useState("");
   const [policyEffDt,      setPolicyEffDt]      = useState("");
@@ -162,9 +162,9 @@ export default function SubmitClaimPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label style={labelStyle}>Insurance Type</label>
-                  <select style={inputStyle} value={insuranceType} onChange={e => setInsuranceType(e.target.value)}>
-                    <option>Auto</option><option>Health</option><option>Property</option><option>Life</option><option>Travel</option>
-                  </select>
+                    <select style={inputStyle} value={insuranceType} onChange={e => setInsuranceType(e.target.value)}>
+                      <option>Motor</option><option>Health</option><option>Property</option><option>Life</option><option>Travel</option><option>Mobile</option>
+                    </select>
                 </div>
                 <div><label style={labelStyle}>Claim Amount (₹)</label><input type="number" style={inputStyle} placeholder="45000" value={claimAmount} onChange={e => setClaimAmount(e.target.value)} /></div>
                 <div><label style={labelStyle}>Monthly Premium (₹)</label><input type="number" style={inputStyle} placeholder="200" value={premiumAmount} onChange={e => setPremiumAmount(e.target.value)} /></div>
@@ -173,7 +173,7 @@ export default function SubmitClaimPage() {
                 <div>
                   <label style={labelStyle}>Incident Severity</label>
                   <select style={inputStyle} value={incidentSeverity} onChange={e => setIncidentSeverity(e.target.value)}>
-                    <option>Minor Damage</option><option>Major Damage</option><option>Total Loss</option>
+                    <option>Minor Loss</option><option>Major Loss</option><option>Total Loss</option>
                   </select>
                 </div>
                 <div><label style={labelStyle}>Incident Date (Loss)</label><input type="date" style={inputStyle} value={lossDt} onChange={e => setLossDt(e.target.value)} /></div>
@@ -208,7 +208,7 @@ export default function SubmitClaimPage() {
                 <div>
                   <label style={labelStyle}>House Type</label>
                   <select style={inputStyle} value={houseType} onChange={e => setHouseType(e.target.value)}>
-                    <option value="Own">Own</option><option value="Rent">Rent</option><option value="Lease">Lease</option>
+                    <option value="Own">Own</option><option value="Rent">Rent</option><option value="Mortgage">Mortgage</option>
                   </select>
                 </div>
                 <div>
@@ -220,7 +220,7 @@ export default function SubmitClaimPage() {
                 <div>
                   <label style={labelStyle}>Education Level (optional)</label>
                   <select style={inputStyle} value={educationLevel} onChange={e => setEducationLevel(e.target.value)}>
-                    <option value="">Unknown</option><option value="Below HSC">Below HSC</option><option value="HSC">HSC</option><option value="Bachelor">Bachelor</option><option value="Master">Master</option>
+                    <option value="">Unknown</option><option value="High School">High School</option><option value="College">College</option><option value="Bachelor">Bachelor</option><option value="Masters">Masters</option><option value="MD">MD</option><option value="PhD">PhD</option>
                   </select>
                 </div>
                 <div><label style={labelStyle}>Family Members</label><input type="number" min={1} style={inputStyle} placeholder="2" value={familyMembers} onChange={e => setFamilyMembers(e.target.value)} /></div>
@@ -234,7 +234,7 @@ export default function SubmitClaimPage() {
                 <div>
                   <label style={labelStyle}>Authority Contacted</label>
                   <select style={inputStyle} value={authorityContacted} onChange={e => setAuthorityContacted(e.target.value)}>
-                    <option value="">None</option><option value="Police">Police</option><option value="Medical">Medical</option><option value="Fire">Fire</option><option value="Ambulance">Ambulance</option>
+                    <option value="">None / Unknown</option><option value="Police">Police</option><option value="Ambulance">Ambulance</option><option value="Other">Other</option>
                   </select>
                 </div>
                 <div><label style={labelStyle}>Agent ID (optional)</label><input style={inputStyle} placeholder="AGENT00413" value={agentId} onChange={e => setAgentId(e.target.value)} /></div>

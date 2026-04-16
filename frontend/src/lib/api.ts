@@ -14,16 +14,16 @@ const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 // ── Types (mirrors detectra_api.py Pydantic models) ──────────────────────────
 
 export interface ClaimRequest {
-  // Categorical
-  INSURANCE_TYPE: string;
-  MARITAL_STATUS: string;
-  EMPLOYMENT_STATUS: string;
-  RISK_SEGMENTATION: string;
-  HOUSE_TYPE: string;
-  SOCIAL_CLASS: string;
-  CUSTOMER_EDUCATION_LEVEL?: string;
-  INCIDENT_SEVERITY: string;
-  AUTHORITY_CONTACTED?: string;
+  // Categorical — values must exactly match OrdinalEncoder training categories
+  INSURANCE_TYPE: "Motor" | "Health" | "Property" | "Life" | "Travel" | "Mobile";
+  MARITAL_STATUS: "Y" | "N";
+  EMPLOYMENT_STATUS: "Y" | "N";
+  RISK_SEGMENTATION: "H" | "M" | "L";
+  HOUSE_TYPE: "Own" | "Rent" | "Mortgage";
+  SOCIAL_CLASS: "HI" | "MI" | "LI";
+  CUSTOMER_EDUCATION_LEVEL?: "High School" | "College" | "Bachelor" | "Masters" | "MD" | "PhD";
+  INCIDENT_SEVERITY: "Minor Loss" | "Major Loss" | "Total Loss";
+  AUTHORITY_CONTACTED?: "Police" | "Ambulance" | "Other";
   // Numerical
   AGE: number;
   TENURE: number;

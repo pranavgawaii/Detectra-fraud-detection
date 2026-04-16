@@ -442,10 +442,17 @@ async def score_claim(claim: ClaimRequest):
     try:
         row = engineer_features(claim)
 
-        for col in pipe["cat_cols"]:
+        # ── Categorical: fill nulls then guard against unseen values ─────────
+        # OrdinalEncoder raises ValueError for categories it did not see at
+        # training time. We map any unrecognised value to "Unknown" (which IS
+        # always present in training data as the null-fill sentinel).
+        for i, col in enumerate(pipe["cat_cols"]):
             row[col] = row[col].fillna("Unknown")
+            known = set(pipe["encoder"].categories_[i])
+            row[col] = row[col].apply(lambda v: v if v in known else "Unknown")
+
         for col in pipe["num_cols"]:
-            # Fix #2 (MEDIUM): Use training-time median instead of 0 for null fill
+            # Use training-time median instead of 0 for numeric null fill
             fallback = _NUM_MEDIANS.get(col, 0)
             row[col] = pd.to_numeric(row[col], errors="coerce").fillna(fallback)
         row[pipe["cat_cols"]] = pipe["encoder"].transform(row[pipe["cat_cols"]])
@@ -453,7 +460,11 @@ async def score_claim(claim: ClaimRequest):
         X_input = row[pipe["features"]]
         score   = float(pipe["model"].predict_proba(X_input)[0, 1])
 
-        if score < 0.30:
+        # Use the threshold stored in the pkl (0.35) for LOW boundary.
+        # The pkl's `threshold` key holds the Youden-J optimal cut-off from
+        # training; using it keeps scoring consistent with training evaluation.
+        _low_threshold = float(pipe.get("threshold", 0.35))
+        if score < _low_threshold:
             tier   = "LOW"
             action = "Auto-Approve (Green Channel)"
         elif score < 0.60:
@@ -463,7 +474,7 @@ async def score_claim(claim: ClaimRequest):
             tier   = "HIGH"
             action = "Stop Payment — Escalate to SIU"
 
-        # Fix #3 (MEDIUM): Defensively unwrap SHAP values.
+        # Defensively unwrap SHAP values.
         # shap_values() can return a list (binary XGBoost → [neg_class, pos_class])
         # OR a plain ndarray depending on SHAP version. We always want the
         # positive-class row (index 1 for list, index 0 for plain array).
