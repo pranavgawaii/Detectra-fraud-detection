@@ -11,7 +11,7 @@ import {
   FileText, AlertTriangle, Activity, TrendingUp,
   ArrowUpRight, ArrowDownRight, Download, Plus,
   Search, ChevronDown, CheckCircle2, Clock4,
-  MoreHorizontal, Eye, SlidersHorizontal, ShieldCheck, Volume2,
+  MoreHorizontal, Eye, SlidersHorizontal, ShieldCheck, Volume2, X
 } from "lucide-react";
 import { useChat } from "@/components/providers/ChatProvider";
 import { ShiningText } from "@/components/ui/shining-text";
@@ -513,11 +513,18 @@ export default function DashboardPage() {
                 <ShiningText text="Detectra is thinking..." />
               </div>
             ) : (
-              <div className="max-w-xl bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-2xl relative">
+              <div className="max-w-xl bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-2xl relative group pr-8">
                 <div className="absolute top-0 left-0 w-1 h-full bg-[var(--primary)]" />
+                <button 
+                  onClick={() => setAiResponse(null)}
+                  className="absolute top-3 right-3 p-1 rounded-md text-[var(--muted-foreground)] opacity-50 hover:bg-[var(--muted)] hover:opacity-100 transition-all"
+                  title="Close AI Response"
+                >
+                  <X size={14} />
+                </button>
                 <p className="text-[var(--foreground)] text-[0.85rem]">{aiResponse}</p>
                 <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2">
-                   <button onClick={() => playAudio(aiResponse || "")} className="flex items-center gap-1.5 text-[0.65rem] font-bold text-[var(--primary)]">
+                   <button onClick={() => playAudio(aiResponse || "")} className="flex items-center gap-1.5 text-[0.65rem] font-bold text-[var(--primary)] hover:opacity-80 transition-opacity">
                      <Volume2 size={12} className={isPlayingAudio ? "animate-pulse" : ""} /> Listen
                    </button>
                 </div>
