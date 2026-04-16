@@ -1,11 +1,14 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Play, Shield, Sparkles } from 'lucide-react';
+import { ArrowRight, Play, Shield, Sparkles, XIcon } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { FauxDashboard } from './FauxDashboard';
 
 export const HeroSection = () => {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
   return (
     <section className="flex flex-col text-center max-w-7xl mx-auto px-4 sm:px-6 items-center relative">
       {/* Subtle radial glow behind hero */}
@@ -44,13 +47,13 @@ export const HeroSection = () => {
           Start free trial
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </Link>
-        <Link
-          href="/login"
-          className="group w-full sm:w-auto font-medium px-7 py-3.5 rounded-xl transition-all text-[0.9rem] flex items-center justify-center gap-2.5 border border-neutral-800 text-neutral-300 hover:bg-white/[0.03] hover:border-neutral-700 hover:text-white"
+        <button
+          onClick={() => setIsVideoOpen(true)}
+          className="group w-full sm:w-auto font-medium px-7 py-3.5 rounded-xl transition-all text-[0.9rem] flex items-center justify-center gap-2.5 border border-neutral-800 text-neutral-300 hover:bg-white/[0.03] hover:border-neutral-700 hover:text-white cursor-pointer"
         >
           <Play className="w-3.5 h-3.5" />
           View live demo
-        </Link>
+        </button>
       </div>
 
       {/* Trust indicators */}
@@ -61,6 +64,43 @@ export const HeroSection = () => {
         <span className="w-1 h-1 rounded-full bg-neutral-800 hidden sm:block" />
         <span className="hidden sm:flex items-center gap-1.5">Setup in 5 minutes</span>
       </div>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {isVideoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsVideoOpen(false)}
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-xl"
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="relative w-full max-w-4xl aspect-video mx-4 md:mx-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setIsVideoOpen(false)}
+                className="absolute -top-14 right-0 text-white text-xl bg-neutral-900/60 ring-1 ring-white/10 backdrop-blur-md rounded-full p-2.5 hover:bg-neutral-800 transition-colors"
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+              <div className="w-full h-full border-2 border-white/10 rounded-2xl overflow-hidden isolate z-[1] relative shadow-2xl shadow-black/50">
+                <iframe
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                  className="w-full h-full rounded-2xl"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <FauxDashboard />
     </section>
