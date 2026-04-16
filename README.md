@@ -1,49 +1,37 @@
 <div align="center">
 
 # Detectra | Enterprise Fraud Intelligence
-**Next-Gen sub-second AI engine for elite insurance investigation units.**
+**Elite sub-second AI engine for insurance investigation units.**
 
-
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Supabase](https://img.shields.io/badge/Database-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
 
 </div>
 
 ---
 
-## 💎 Core Overview
-Detectra bridges the gap between massive insurance data streams and actionable fraud insights. Our engine surfaces **47+ unique fraud signals** instantly, slashing manual triage time by up to 85% for Special Investigation Units (SIU).
-
-### ⚔️ Key Features
-- **🧠 AI Verdict Engine**: Real-time 0–100 risk scoring with LLM-powered natural language explanations.
-- **🛰️ Spatial Analysis**: Deep geo-spatial risk mapping and network anomaly detection.
-- **⚡ sub-second Triage**: Process thousands of claims per second via our optimized Next.js + Express stack.
-- **🎨 Premium 'Emerald' UI**: A meticulously crafted dark interface designed for focus and elite performance.
-- **🛠️ Dynamic Rules**: No-code logical flows for automated claim routing and escalation.
-
----
-
 ## 🏗️ Technical Architecture
-Detectra maintains a strict separation of concerns through its professional monorepo design, ensuring scalability and security.
+Detectra is designed for high-throughput fraud detection, utilizing a modern decoupled stack.
 
 ```mermaid
 graph LR
-    User([Investigation Team]) --> Frontend[Next.js Dashboard]
-    Frontend --> Auth[Clerk/JWT Auth]
-    Auth --> Backend[Express API Service]
-    Backend --> AI[Fraud Intelligence Engine]
-    AI --> Signals{47+ Signals}
-    Signals --> DB[(Enterprise Database)]
+    User([Investigation Team]) --> Frontend[Next.js 14]
+    Frontend --> Auth[Supabase Auth]
+    Frontend --> Backend[FastAPI / Sarvam AI]
+    Backend --> AI[Sarvam 30B LLM]
+    AI --> DB[(PostgreSQL / Supabase)]
 ```
 
-### 📁 Project Structure
+### 📁 Streamlined Repository Structure
 ```bash
-├── frontend/           # Next.js 14 Dashboard Application
-│   ├── src/app/        # High-performance SSR/CSR routes
-│   ├── src/components/ # Reusable UI primitives & layout
-│   └── public/         # Global assets & branding
-├── backend/            # Express.js Fraud API
-│   ├── server.js       # Signal processing & API logic
-│   └── package.json    # Backend specialized dependencies
-└── .config/            # Shared linting & environment config
+├── frontend/           # Next.js 14 Dashboard & Landing
+│   ├── src/app/        # SSR Routes & Interface
+│   └── src/components/ # Modular UI Components
+├── backend/            # Python FastAPI Service (Sarvam AI)
+│   ├── main.py         # AI Logic & TTS Processing
+│   └── requirements.txt# Backend Dependencies
+└── .env.example        # Centralized Config Manifest
 ```
 
 ---
@@ -51,45 +39,34 @@ graph LR
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js**: 18.0 or higher
-- **Package Manager**: npm, yarn, or pnpm
+- **Node.js**: 18.0+
+- **Python**: 3.9+
+- **PIP**: Latest
 
-### Quick Deployment
-1. **Clone & Enter**
+### Deployment
+1. **Clone & Setup**
    ```bash
-   git clone https://github.com/pranavgawaii/Detectra-fraud-detection.git
+   git clone https://github.com/pranavgawaii/Detectra.git
    cd Detectra
-   ```
-
-2. **Automated Setup**
-   ```bash
    npm run install:all
    ```
 
-3. **Launch Ecosystem**
+2. **Environment**
+   - Copy root `.env.example` values to `frontend/.env.local` and `sarvam_api/.env`.
+
+3. **Launch**
    ```bash
    npm run dev
    ```
 
-| Command | Action |
-| :--- | :--- |
-| `npm run dev:frontend` | Start Next.js dashboard only |
-| `npm run dev:backend` | Start Fraud API only |
-| `npm run build:frontend` | Compile production bundle |
-
 ---
 
-## 🔒 Security & Compliance
-Detectra is built with enterprise-grade security at its core:
-- **Data Privacy**: GDPR & CCPA compliant data handling.
-- **Compliance**: Adheres to IRDAI guidelines for digital insurance systems.
-- **Security**: Built-in protection against SQL injection, XSS, and CSRF via Next.js 14 security headers.
+## 🔒 Security & Analytics
+- **Identity**: Supabase Auth with OAuth 2.0 integration.
+- **Privacy**: End-to-end encrypted claim analysis.
+- **Analytics**: Real-time fraud scoring powered by Sarvam AI Bulbul V3.
 
 ---
-
-## 📜 License
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
 <div align="center">
-  <strong>© 2026 Detectra Technologies Pvt. Ltd. | Built for the future of insurance.</strong>
+  <strong>Built for the future of insurance. | © 2026 Detectra Technologies</strong>
 </div>

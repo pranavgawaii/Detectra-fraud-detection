@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   description: BRAND.description,
   applicationName: BRAND.name,
   icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
+    icon: "/assets/logo.png",
+    apple: "/assets/logo.png",
   },
   openGraph: {
     title: "Detectra",

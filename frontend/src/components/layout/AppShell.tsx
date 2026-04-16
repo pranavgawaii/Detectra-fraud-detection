@@ -16,6 +16,7 @@ import {
   Menu, MenuTrigger, MenuPopup, MenuItem, MenuSeparator, MenuShortcut 
 } from "@/components/ui/menu";
 import { useChat } from "@/components/providers/ChatProvider";
+import { supabase } from "@/lib/supabase";
 
 const navGroups = [
   {
@@ -89,6 +90,26 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     tooltipBg:"var(--popover)",
     tooltipTxt:"var(--popover-foreground)",
   };
+
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const displayName = user?.user_metadata?.first_name 
+    ? `${user.user_metadata.first_name} ${user.user_metadata.last_name || ""}`
+    : user?.email?.split("@")[0] || "Investigator";
+  
+  const initials = displayName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
   return (
     <div
@@ -321,13 +342,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Menu>
               <MenuTrigger className="flex items-center gap-3 group focus:outline-none">
                 <div className="flex flex-col items-end hidden sm:flex">
-                  <p className="text-[0.78rem] font-bold leading-tight text-[var(--foreground)]">Arjun Khanna</p>
+                  <p className="text-[0.78rem] font-bold leading-tight text-[var(--foreground)]">{displayName}</p>
                   <p className="text-[0.64rem] font-medium text-[var(--muted-foreground)]">Sr. Investigator</p>
                 </div>
                 <div
                   className="flex h-9 w-9 items-center justify-center rounded-xl font-bold text-[0.75rem] transition-all group-hover:scale-[1.02] bg-[var(--primary)] text-white shadow-sm border border-black/10"
                 >
-                  AK
+                  {initials}
                 </div>
               </MenuTrigger>
               <MenuPopup align="end" sideOffset={12} className="w-56 p-1 bg-[var(--popover)] border border-[var(--border)] text-[var(--foreground)]">
@@ -349,7 +370,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <MenuSeparator className="bg-[var(--border)]" />
                 <MenuItem 
                   variant="destructive" 
-                  onClick={() => window.location.href = "/login"}
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = "/login";
+                  }}
                   className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
                 >
                   <LogOutIcon size={14} className="mr-2" /> Log out

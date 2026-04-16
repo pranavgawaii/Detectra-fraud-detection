@@ -12,7 +12,7 @@ import {
   FileText, AlertTriangle, Activity, TrendingUp,
   ArrowUpRight, ArrowDownRight, Download, Plus,
   Search, ChevronDown, ShieldX, CheckCircle2, Clock4,
-  MoreHorizontal, Eye, SlidersHorizontal, ShieldCheck,
+  MoreHorizontal, Eye, SlidersHorizontal, ShieldCheck, Volume2,
 } from "lucide-react";
 import { useChat } from "@/components/providers/ChatProvider";
 import { ShiningText } from "@/components/ui/shining-text";
@@ -38,28 +38,150 @@ function BarTooltip({ active, payload, label }: any) {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+
 export default function DashboardPage() {
+  const router = useRouter();
   const [chartsReady, setChartsReady] = useState(false);
-  const [chartView, setChartView]     = useState<"line" | "bar">("bar");
-  const [query, setQuery]             = useState("");
+  const [chartView, setChartView] = useState<"line" | "bar">("bar");
+  const [query, setQuery] = useState("");
   const { isThinking, setIsThinking } = useChat();
   const [chatValue, setChatValue] = useState("");
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [selectedClaim, setSelectedClaim] = useState(mockClaims[0]);
+  const [activeAnalysis, setActiveAnalysis] = useState<{
+    risk_score: number;
+    signals: string[];
+    explanation: string;
+    isAnalyzing: boolean;
+  }>({
+    risk_score: mockClaims[0].risk,
+    signals: ["Potential high claim amount", "New policy risk"],
+    explanation: "Selection detailed analysis pending...",
+    isAnalyzing: false
+  });
 
-  useEffect(() => { setChartsReady(true); }, []);
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/login");
+      } else {
+        setChartsReady(true);
+        analyzeClaim(mockClaims[0]);
+      }
+    };
+    
+    checkUser();
 
-  const handleSendMessage = (e: React.FormEvent) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) router.push("/login");
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
+
+  const analyzeClaim = async (claim: typeof mockClaims[0]) => {
+    setActiveAnalysis(prev => ({ ...prev, isAnalyzing: true }));
+    try {
+      const response = await fetch("http://localhost:8000/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          claim_amount: claim.claim_amount,
+          expected_amount: claim.expected_amount,
+          policy_age_days: claim.policy_age_days,
+          claim_frequency: claim.claim_frequency
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setActiveAnalysis({
+          risk_score: data.risk_score,
+          signals: data.signals,
+          explanation: data.explanation,
+          isAnalyzing: false
+        });
+      }
+    } catch (e) {
+      console.error("Analysis failed", e);
+      setActiveAnalysis(prev => ({ ...prev, isAnalyzing: false }));
+    }
+  };
+
+  const handleClaimSelect = (claim: typeof mockClaims[0]) => {
+    setSelectedClaim(claim);
+    analyzeClaim(claim);
+  };
+
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const playAudio = async (text: string) => {
+    if (!text || isPlayingAudio) return;
+    
+    setIsPlayingAudio(true);
+    try {
+      const response = await fetch("http://localhost:8000/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      
+      if (!response.ok) throw new Error("TTS failed");
+      
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+        URL.revokeObjectURL(url);
+      };
+
+      audio.onerror = (err) => {
+        console.error("Audio error", err);
+        setIsPlayingAudio(false);
+        alert("Playback error. Please check your speaker/volume.");
+      };
+      
+      await audio.play();
+    } catch (e: any) {
+      console.error("Audio playback failed", e);
+      setIsPlayingAudio(false);
+      alert("Audio failed: " + (e.message || "Unknown error"));
+    }
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatValue.trim()) return;
     
+    const userMsg = chatValue;
     setAiResponse(null);
     setChatValue("");
     setIsThinking(true);
     
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: userMsg }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to get response from AI service");
+      }
+      
+      const data = await response.json();
+      setAiResponse(data.reply);
+    } catch (error) {
+      console.error("Chat Error:", error);
+      setAiResponse("Sorry, I'm having trouble connecting to the AI engine. Please ensure the Sarvam service is running.");
+    } finally {
       setIsThinking(false);
-      setAiResponse("I've successfully analyzed the requested claims. My engine detected a slight spike in 'Narrative Inconsistency' within the current batch (#CLM-2047, #CLM-2051), though no immediate fraud is confirmed. I recommend further manual review for these specific files.");
-    }, 3000);
+    }
   };
 
   const filteredClaims = mockClaims.filter(
@@ -186,8 +308,8 @@ export default function DashboardPage() {
             <p className="text-[0.72rem] font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--muted-foreground)" }}>
               AI-Generated Risk Score
             </p>
-            <p className="text-[1.8rem] font-bold tracking-tight leading-none mb-3" style={{ color: "#ef4444" }}>
-              84 / 100
+            <p className="text-[1.8rem] font-bold tracking-tight leading-none mb-3" style={{ color: activeAnalysis.risk_score > 70 ? "#ef4444" : "#f59e0b" }}>
+              {activeAnalysis.isAnalyzing ? "--" : activeAnalysis.risk_score} / 100
             </p>
 
             {/* Progress segments */}
@@ -195,20 +317,23 @@ export default function DashboardPage() {
               Smart Risk Breakdown
             </p>
             <div className="flex gap-0.5 h-2 rounded-full overflow-hidden mb-2.5">
-              {fraudSignals.map((s) => (
+              {activeAnalysis.signals.map((s, idx) => (
                 <div
-                  key={s.label}
-                  style={{ width: `${s.pct}%`, background: s.color, opacity: 0.85, flex: "0 0 auto", minWidth: 6 }}
+                  key={idx}
+                  style={{ width: `${100 / (activeAnalysis.signals.length || 1)}%`, background: "#ef4444", opacity: 0.85, flex: "0 0 auto", minWidth: 6 }}
                 />
               ))}
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-              {fraudSignals.map((s) => (
-                <span key={s.label} className="flex items-center gap-1.5 text-[0.7rem]" style={{ color: "var(--muted-foreground)" }}>
-                  <span className="inline-block h-2 w-2 rounded-sm shrink-0" style={{ background: s.color }} />
-                  {s.label.split(" ").slice(0, 2).join(" ")} ({s.pct}%)
+            <div className="grid grid-cols-1 gap-y-1">
+              {activeAnalysis.signals.map((s, idx) => (
+                <span key={idx} className="flex items-center gap-1.5 text-[0.7rem]" style={{ color: "var(--muted-foreground)" }}>
+                  <span className="inline-block h-1.5 w-1.5 rounded-full shrink-0" style={{ background: "#ef4444" }} />
+                  {s}
                 </span>
               ))}
+              {activeAnalysis.signals.length === 0 && (
+                <span className="text-[0.7rem] text-neutral-500 italic">No critical signals detected</span>
+              )}
             </div>
           </div>
 
@@ -227,18 +352,36 @@ export default function DashboardPage() {
             <div className="relative flex items-start justify-between">
               <div>
                 <p className="text-[0.6rem] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: "#72e3ad" }}>
-                  Active Investigation
+                  {activeAnalysis.isAnalyzing ? "Analyzing..." : "Active Investigation"}
                 </p>
-                <p className="text-[0.75rem] font-bold text-white mb-0.5">Claim #CLM-2047</p>
-                <p className="text-[0.68rem] leading-relaxed" style={{ color: "#94a3b8" }}>
-                  Multiple inconsistencies detected. High probability of fraud.
-                </p>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-[0.75rem] font-bold text-white">Claim {selectedClaim.id}</p>
+                  <button 
+                    onClick={() => playAudio(activeAnalysis.explanation)}
+                    disabled={activeAnalysis.isAnalyzing || isPlayingAudio}
+                    className="p-1 rounded-md hover:bg-white/10 transition-colors disabled:opacity-30"
+                    title="Listen to analysis"
+                  >
+                    <Volume2 size={12} className={isPlayingAudio ? "animate-pulse text-[#72e3ad]" : "text-neutral-400"} />
+                  </button>
+                </div>
+                <div className="text-[0.68rem] leading-relaxed max-h-[60px] overflow-y-auto custom-scrollbar" style={{ color: "#94a3b8" }}>
+                  {activeAnalysis.isAnalyzing ? (
+                    <span className="animate-pulse">Loading AI explanation...</span>
+                  ) : (
+                    activeAnalysis.explanation
+                  )}
+                </div>
               </div>
               <span
                 className="shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-bold"
-                style={{ background: "rgba(239,68,68,0.2)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.35)" }}
+                style={{ 
+                  background: activeAnalysis.risk_score > 70 ? "rgba(239,68,68,0.2)" : "rgba(245,158,11,0.2)", 
+                  color: activeAnalysis.risk_score > 70 ? "#ef4444" : "#f59e0b", 
+                  border: `1px solid ${activeAnalysis.risk_score > 70 ? "rgba(239,68,68,0.35)" : "rgba(245,158,11,0.35)"}` 
+                }}
               >
-                HIGH RISK
+                {activeAnalysis.risk_score > 70 ? "HIGH RISK" : "MODERATE"}
               </span>
             </div>
 
@@ -250,19 +393,19 @@ export default function DashboardPage() {
                   <circle
                     cx="24" cy="24" r="19" fill="none"
                     stroke="url(#gGrad)" strokeWidth="5"
-                    strokeDasharray={`${(84 / 100) * 119.4} 119.4`}
+                    strokeDasharray={`${(activeAnalysis.risk_score / 100) * 119.4} 119.4`}
                     strokeLinecap="round"
                     className="transition-all duration-1000"
                   />
                   <defs>
                     <linearGradient id="gGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#f87171" />
-                      <stop offset="100%" stopColor="#ef4444" />
+                      <stop offset="0%" stopColor={activeAnalysis.risk_score > 70 ? "#f87171" : "#fbbf24"} />
+                      <stop offset="100%" stopColor={activeAnalysis.risk_score > 70 ? "#ef4444" : "#f59e0b"} />
                     </linearGradient>
                   </defs>
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-[0.82rem] font-black text-white">84</span>
+                  <span className="text-[0.82rem] font-black text-white">{activeAnalysis.isAnalyzing ? "..." : activeAnalysis.risk_score}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 w-full">
@@ -439,7 +582,8 @@ export default function DashboardPage() {
                 return (
                   <tr
                     key={c.id}
-                    className="group transition-colors hover:bg-[var(--muted)]/50"
+                    onClick={() => handleClaimSelect(c)}
+                    className={`group transition-colors cursor-pointer ${selectedClaim.id === c.id ? "bg-[var(--primary)]/10" : "hover:bg-[var(--muted)]/50"}`}
                     style={{ borderBottom: "1px solid var(--border)" }}
                   >
                     <td className="px-5 py-4 font-bold text-[0.82rem]" style={{ color: "var(--foreground)" }}>
@@ -511,7 +655,17 @@ export default function DashboardPage() {
                 <p className="text-[var(--foreground)] font-medium">{aiResponse}</p>
                 <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2">
                   <span className="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[var(--muted-foreground)]">Detectra Engine v1.42</span>
-                  <button onClick={() => setAiResponse(null)} className="text-[0.65rem] font-bold text-[var(--primary)] hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Dismiss Analysis</button>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => aiResponse && playAudio(aiResponse)}
+                      disabled={isPlayingAudio}
+                      className="flex items-center gap-1.5 text-[0.65rem] font-bold text-[var(--primary)] hover:underline disabled:opacity-30"
+                    >
+                      <Volume2 size={12} className={isPlayingAudio ? "animate-pulse" : ""} />
+                      Listen
+                    </button>
+                    <button onClick={() => setAiResponse(null)} className="text-[0.65rem] font-bold text-[var(--primary)] hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Dismiss Analysis</button>
+                  </div>
                 </div>
               </div>
             )}

@@ -14,19 +14,19 @@ type BrandLogoProps = {
 
 const sizeMap = {
   sm: {
-    mark: "h-10 w-10",
-    gap: "gap-3",
-    label: "text-base",
+    mark: "h-6 w-auto",
+    gap: "gap-1.5",
+    label: "text-sm",
   },
   md: {
-    mark: "h-12 w-12",
-    gap: "gap-3.5",
-    label: "text-[1.05rem]",
+    mark: "h-7 w-auto",
+    gap: "gap-2",
+    label: "text-[0.95rem]",
   },
   lg: {
-    mark: "h-14 w-14",
-    gap: "gap-4",
-    label: "text-[1.2rem]",
+    mark: "h-9 w-auto",
+    gap: "gap-2.5",
+    label: "text-[1.1rem]",
   },
 } as const;
 
@@ -53,32 +53,24 @@ export default function BrandLogo({
 
   const content = (
     <>
-      <span className={["relative block shrink-0", config.mark].join(" ")}>
+      <span className="relative flex shrink-0 items-center justify-center">
         <Image
           src={BRAND.markSrc}
           alt={`${BRAND.name} logo`}
-          fill
-          sizes={size === "lg" ? "56px" : size === "md" ? "48px" : "40px"}
+          width={size === "lg" ? 48 : size === "md" ? 32 : 28}
+          height={size === "lg" ? 36 : size === "md" ? 24 : 20}
           priority={priority}
           className="object-contain"
         />
       </span>
-      {showName ? (
-        <span
-          className={[
-            "font-black tracking-[-0.01em] font-sans",
-            config.label,
-            labelClassName ?? "",
-          ].join(" ")}
-          style={{ 
-            ...theme.labelStyle,
-            letterSpacing: '-0.3px',
-            lineHeight: '1.1'
-          }}
+      {showName && (
+        <span 
+          className={["font-extrabold tracking-tighter", config.label, labelClassName].join(" ")}
+          style={theme.labelStyle}
         >
-          <span className="text-[1.1em]">D</span>etectra
+          {BRAND.name}
         </span>
-      ) : null}
+      )}
     </>
   );
 
