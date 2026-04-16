@@ -25,7 +25,7 @@ const transitionVariants = {
             },
         },
     },
-}
+} as const
 
 export function HeroSection({ dashboardNode }: { dashboardNode?: React.ReactNode }) {
     return (
