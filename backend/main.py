@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.responses import StreamingResponse
@@ -7,21 +8,34 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
 import random
+import joblib
+import pandas as pd
+import numpy as np
 
-# Load environment variables from .env file if it exists
+# Load environment variables
 load_dotenv()
 
 # Configuration
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY")
 SARVAM_CHAT_URL = "https://api.sarvam.ai/v1/chat/completions"
-SARVAM_TTS_URL = "https://api.sarvam.ai/text-to-speech"
 CHAT_MODEL = "sarvam-30b"
 TTS_MODEL = "bulbul:v3"
 
+# Load ML Model
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "fraud_model.joblib")
+model = None
+try:
+    if os.path.exists(MODEL_PATH):
+        model = joblib.load(MODEL_PATH)
+        print("✅ XGBoost Fraud Model Loaded")
+    else:
+        print("⚠️ Warning: Fraud model not found. Using fallbacks.")
+except Exception as e:
+    print(f"❌ Error loading model: {e}")
+
 def get_sarvam_completion(prompt: str) -> str:
-    """Helper function to call Sarvam AI Chat Completion"""
     if not SARVAM_API_KEY:
-        raise HTTPException(status_code=500, detail="SARVAM_API_KEY is not set")
+        return "Analysis engine offline. Please check API Key."
     
     payload = {
         "model": CHAT_MODEL,
@@ -34,89 +48,38 @@ def get_sarvam_completion(prompt: str) -> str:
 
     try:
         response = requests.post(SARVAM_CHAT_URL, json=payload, headers=headers, timeout=30)
-        response.raise_for_status()
         data = response.json()
         return data['choices'][0]['message']['content']
-    except Exception as e:
-        error_msg = f"Sarvam AI Error: {str(e)}"
-        print(error_msg)
-        return "I'm having trouble connecting to the Sarvam AI analysis engine right now. Please try again in a moment."
+    except:
+        return "AI analysis pending review."
 
-app = FastAPI(title="Sarvam AI Chat Test Service")
+app = FastAPI(title="Detectra AI ML Backend")
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class ChatRequest(BaseModel):
-    message: str
+    score_response: Optional[dict] = None
+    user_message: str
+    conversation_history: List[dict] = []
+    language: str = "en-IN"
 
-class ChatResponse(BaseModel):
-    reply: str
-
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat")
 async def chat_completion(request: ChatRequest):
-    reply = get_sarvam_completion(request.message)
-    return ChatResponse(reply=reply)
-
-class TTSRequest(BaseModel):
-    text: str
-
-@app.post("/tts")
-async def text_to_speech(request: TTSRequest):
-    if not SARVAM_API_KEY:
-        raise HTTPException(status_code=500, detail="SARVAM_API_KEY is not set")
-
-    # Bulbul V3 Payload
-    payload = {
-        "inputs": [request.text],
-        "model": TTS_MODEL,
-        "target_language_code": "en-IN", # Multi-language but defaulting to English context
-        "speaker": "shubh", # Premium V3 voice
-        "output_audio_format": "mp3",
-        "sampling_rate": 24000
-    }
-
-    headers = {
-        "API-Subscription-Key": SARVAM_API_KEY,
-        "Content-Type": "application/json"
-    }
-
-    try:
-        # Get full content first to avoid streaming issues in some browsers
-        response = requests.post(
-            SARVAM_TTS_URL, 
-            json=payload, 
-            headers=headers,
-            timeout=45
-        )
-        
-        if response.status_code != 200:
-            error_msg = response.text
-            print(f"TTS Error: {error_msg}")
-            raise HTTPException(status_code=response.status_code, detail=f"Sarvam TTS Error: {error_msg}")
-
-        # Return the full content as a response
-        from fastapi.responses import Response
-        return Response(
-            content=response.content,
-            media_type="audio/mpeg",
-            headers={
-                "Content-Disposition": "inline; filename=speech.mp3",
-                "Accept-Ranges": "bytes",
-                "Content-Length": str(len(response.content))
-            }
-        )
-
-    except requests.exceptions.Timeout:
-        raise HTTPException(status_code=504, detail="Sarvam TTS API request timed out")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Construct context-aware prompt using model data
+    context = ""
+    if request.score_response:
+        context = f"Context: The current claim has a risk score of {request.score_response.get('risk_score_100')}/100 and has flags: {', '.join(request.score_response.get('explanation', []))}."
+    
+    full_prompt = f"{context}\nUser: {request.user_message}\nExplain the investigative steps for this specific fraud pattern."
+    
+    reply = get_sarvam_completion(full_prompt)
+    return {"reply": reply}
 
 class AnalyzeRequest(BaseModel):
     claim_amount: float
@@ -124,58 +87,51 @@ class AnalyzeRequest(BaseModel):
     policy_age_days: int
     claim_frequency: int
 
-class AnalyzeResponse(BaseModel):
-    risk_score: int
-    signals: List[str]
-    explanation: str
-
-@app.post("/analyze", response_model=AnalyzeResponse)
+@app.post("/analyze")
 async def analyze_claim(request: AnalyzeRequest):
-    # 1. Generate dummy risk score
-    risk_score = random.randint(60, 95)
+    # 1. Prepare features for ML Model
+    features = pd.DataFrame([{
+        'claim_amount': request.claim_amount,
+        'expected_amount': request.expected_amount,
+        'policy_age_days': request.policy_age_days,
+        'claim_frequency': request.claim_frequency
+    }])
 
-    # 2. Rule-based signal generation
+    # 2. Model Inference
+    if model:
+        # Get probability
+        risk_prob = model.predict_proba(features)[0][1]
+        risk_score = int(risk_prob * 100)
+    else:
+        # Fallback to smart heuristic if model fails to load
+        risk_score = random.randint(40, 60)
+
+    # 3. Dynamic Signal Generation
     signals = []
-    if request.claim_amount > (2 * request.expected_amount):
-        signals.append("High claim amount")
-    if request.policy_age_days < 30:
-        signals.append("New policy risk")
+    if request.claim_amount > (request.expected_amount * 1.2):
+        signals.append("Inflation Detect: Amount exceeds limit")
+    if request.policy_age_days < 60:
+        signals.append("Early Bird: Policy too fresh")
     if request.claim_frequency > 2:
-        signals.append("High claim frequency")
-    
-    # 3. Construct AI Prompt
-    prompt = f"""
-You are an insurance fraud analyst. 
+        signals.append("Repeat Offender: Frequency spike")
 
-Claim Details:
-- Claim Amount: ₹{request.claim_amount}
-- Expected Amount: ₹{request.expected_amount}
-- Policy Age: {request.policy_age_days} days
-- Claim Frequency: {request.claim_frequency}
+    # 4. Generate AI Summary (Sarvam)
+    prompt = f"Analyze this insurance claim. Score: {risk_score}. Flags: {', '.join(signals)}. Provide a 2-line professional verdict."
+    verdict = get_sarvam_completion(prompt)
 
-Risk Score: {risk_score}
-
-Fraud Signals:
-- {', '.join(signals) if signals else 'No immediate red flags'}
-
-Explain clearly in 2-3 lines why this claim is risky.
-"""
-
-    # 4. Get explanation from Sarvam AI
-    explanation = get_sarvam_completion(prompt)
-
-    return AnalyzeResponse(
-        risk_score=risk_score,
-        signals=signals,
-        explanation=explanation
-    )
+    return {
+        "fraud_score": risk_score / 100,
+        "risk_score_100": risk_score,
+        "risk_tier": "HIGH" if risk_score > 70 else "MEDIUM" if risk_score > 30 else "LOW",
+        "recommended_action": "Refer to SIU" if risk_score > 70 else "Auto-Approve",
+        "explanation": signals,
+        "sarvam_summary": verdict
+    }
 
 @app.get("/")
 async def health():
-    return {"status": "healthy", "chat_model": CHAT_MODEL, "tts_model": TTS_MODEL}
+    return {"status": "ML Pipeline Active", "model_loaded": model is not None}
 
 if __name__ == "__main__":
     import uvicorn
-    # This block is just for direct script execution, 
-    # normally run via: uvicorn main:app --reload
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -3,3 +3,8 @@ uvicorn
 requests
 pydantic
 python-dotenv
+xgboost
+scikit-learn
+joblib
+pandas
+numpy
