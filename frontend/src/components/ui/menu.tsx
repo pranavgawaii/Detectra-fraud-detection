@@ -48,10 +48,12 @@ export function MenuGroup(props: MenuPrimitive.Group.Props): React.ReactElement 
   return <MenuPrimitive.Group data-slot="menu-group" {...props} />;
 }
 
+import Link from "next/link";
+
 export function MenuItem({
-  className, inset, variant = "default", ...props
-}: MenuPrimitive.Item.Props & { inset?: boolean; variant?: "default" | "destructive" }): React.ReactElement {
-  return (
+  className, inset, variant = "default", href, children, ...props
+}: MenuPrimitive.Item.Props & { inset?: boolean; variant?: "default" | "destructive"; href?: string }): React.ReactElement {
+  const content = (
     <MenuPrimitive.Item
       className={cn(
         "flex min-h-8 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-inset:ps-8 data-[variant=destructive]:text-destructive-foreground data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4 [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0",
@@ -61,8 +63,20 @@ export function MenuItem({
       data-slot="menu-item"
       data-variant={variant}
       {...props}
-    />
+    >
+      {children}
+    </MenuPrimitive.Item>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="block no-underline">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }
 
 export function MenuCheckboxItem({
