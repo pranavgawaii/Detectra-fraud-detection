@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,15 +36,11 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoFill = (demoType: string) => {
-    let targetEmail = "demo@detectra.in";
-    if (demoType === 'admin') targetEmail = "admin@detectra.in";
-    else if (demoType === 'staff') targetEmail = "staff@detectra.in";
-    else if (demoType === 'customer') targetEmail = "customer@detectra.in";
-
-    setEmail(targetEmail);
-    setPass("Detectra@123");
+  const handleDemoSelect = (demoType: string) => {
+    setSelectedDemo(demoType);
     setError("");
+    setEmail("");
+    setPass("");
   };
 
   return (
@@ -131,24 +128,44 @@ export default function LoginPage() {
 
         {/* Demo Access */}
         <div className="pt-5 border-t border-neutral-800/40">
-          <p className="text-[0.6rem] font-bold uppercase tracking-widest text-neutral-700 mb-3 text-center">Demo Environments</p>
+          <p className="text-[0.6rem] font-bold uppercase tracking-widest text-neutral-700 mb-3 text-center">Select Role to View Credentials</p>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { label: "Admin", type: "admin" },
-              { label: "Staff", type: "staff" },
-              { label: "Customer", type: "customer" },
+              { label: "Admin", type: "admin", email: "admin@detectra.in" },
+              { label: "Staff", type: "staff", email: "staff@detectra.in" },
+              { label: "Customer", type: "customer", email: "customer@detectra.in" },
             ].map((demo) => (
               <button
                 key={demo.type}
                 type="button"
-                onClick={() => handleDemoFill(demo.type)}
+                onClick={() => handleDemoSelect(demo.type)}
                 disabled={loading}
-                className="h-9 bg-white/[0.02] border border-neutral-800/60 text-neutral-500 font-medium text-[0.75rem] rounded-lg transition-all hover:bg-white/[0.05] hover:border-neutral-700 hover:text-neutral-300 active:scale-[0.97] disabled:opacity-50"
+                className={`h-9 border font-medium text-[0.75rem] rounded-lg transition-all active:scale-[0.97] disabled:opacity-50 ${
+                  selectedDemo === demo.type
+                    ? "bg-emerald-500/[0.05] border-emerald-500/50 text-emerald-400"
+                    : "bg-white/[0.02] border-neutral-800/60 text-neutral-500 hover:bg-white/[0.05] hover:border-neutral-700 hover:text-neutral-300"
+                }`}
               >
                 {demo.label}
               </button>
             ))}
           </div>
+          
+          <AnimatePresence>
+            {selectedDemo && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-3 overflow-hidden"
+              >
+                <div className="p-3 rounded-lg bg-neutral-900/50 border border-neutral-800/60 text-[0.75rem] text-neutral-400 text-center">
+                  Type <span className="text-white font-medium select-all">{selectedDemo}@detectra.in</span><br/>
+                  Password: <span className="text-white font-medium select-all">Detectra@123</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Security badge */}
