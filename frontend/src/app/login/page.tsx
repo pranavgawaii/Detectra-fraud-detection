@@ -128,12 +128,12 @@ export default function LoginPage() {
 
         {/* Demo Access */}
         <div className="pt-5 border-t border-neutral-800/40">
-          <p className="text-[0.6rem] font-bold uppercase tracking-widest text-neutral-700 mb-3 text-center">Select Role to View Credentials</p>
+          <p className="text-[0.6rem] font-bold uppercase tracking-widest text-neutral-700 mb-3 text-center">Select Your Role</p>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { label: "Admin", type: "admin", email: "admin@detectra.in" },
-              { label: "Staff", type: "staff", email: "staff@detectra.in" },
-              { label: "Customer", type: "customer", email: "customer@detectra.in" },
+              { label: "Admin", type: "admin" },
+              { label: "Staff", type: "staff" },
+              { label: "Customer", type: "customer" },
             ].map((demo) => (
               <button
                 key={demo.type}
@@ -150,22 +150,6 @@ export default function LoginPage() {
               </button>
             ))}
           </div>
-          
-          <AnimatePresence>
-            {selectedDemo && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-3 overflow-hidden"
-              >
-                <div className="p-3 rounded-lg bg-neutral-900/50 border border-neutral-800/60 text-[0.75rem] text-neutral-400 text-center">
-                  Type <span className="text-white font-medium select-all">{selectedDemo}@detectra.in</span><br/>
-                  Password: <span className="text-white font-medium select-all">Detectra@123</span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* Security badge */}
