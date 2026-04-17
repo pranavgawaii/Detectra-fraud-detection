@@ -35,27 +35,15 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = async (demoType: string) => {
+  const handleDemoFill = (demoType: string) => {
     let targetEmail = "demo@detectra.in";
     if (demoType === 'admin') targetEmail = "admin@detectra.in";
     else if (demoType === 'staff') targetEmail = "staff@detectra.in";
     else if (demoType === 'customer') targetEmail = "customer@detectra.in";
 
-    setLoading(true);
+    setEmail(targetEmail);
+    setPass("Detectra@123");
     setError("");
-
-    try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: targetEmail,
-        password: "Detectra@123",
-      });
-
-      if (authError) throw authError;
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError("Demo account login failed. Ensure " + targetEmail + " exists in Supabase with password 'Detectra@123'.");
-      setLoading(false);
-    }
   };
 
   return (
@@ -153,7 +141,7 @@ export default function LoginPage() {
               <button
                 key={demo.type}
                 type="button"
-                onClick={() => handleDemoLogin(demo.type)}
+                onClick={() => handleDemoFill(demo.type)}
                 disabled={loading}
                 className="h-9 bg-white/[0.02] border border-neutral-800/60 text-neutral-500 font-medium text-[0.75rem] rounded-lg transition-all hover:bg-white/[0.05] hover:border-neutral-700 hover:text-neutral-300 active:scale-[0.97] disabled:opacity-50"
               >
