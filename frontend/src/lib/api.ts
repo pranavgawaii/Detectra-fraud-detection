@@ -50,7 +50,7 @@ export const api = {
    * Multi-turn chat with context-aware fraud analysis
    */
   async sarvamChat(data: ChatRequest): Promise<ChatResponse> {
-    const res = await fetch(`${API_BASE}/chat`, {
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
