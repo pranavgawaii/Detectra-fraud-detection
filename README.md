@@ -30,23 +30,30 @@ Detectra operates as a hybrid engine—leveraging a local **Random Forest** mode
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Technical Architecture & Ecosystem
 
-Detectra uses a decoupled architecture to ensure maximum throughput and scalability.
+Detectra is engineered on a **High-Efficiency Distributed Intelligence Fabric**, designed to handle high-concurrency fraud analysis with ultra-low latency. The system employs a multi-layered orchestration pattern to synthesize quantitative Machine Learning outputs with sophisticated Generative AI reasoning.
+
+### **Architectural Pillars**
+
+- **⚡ Intelligence Orchestration**: A specialized FastAPI-driven core that multiplexes between local Scikit-Learn models for rapid quantitative scoring and **Sarvam AI's 30B LLM** for deep qualitative investigation.
+- **⚛️ Edge-Optimized Frontend**: A Next.js 14 (App Router) interface leveraging React Server Components (RSC) and Framer Motion for a premium, high-performance investigator experience.
+- **🛡️ Hardened Identity & Data**: A robust Supabase/PostgreSQL backbone providing enterprise-grade JWT authentication and encrypted persistence for high-sensitivity claims.
+- **🔄 Asynchronous Logic Pipelines**: Parallelized processing for dynamic signal generation, flag detection, and AI-driven verdict synthesis.
 
 ```mermaid
 graph TD
     User([Investigation Unit]) -->|Next.js 14 UI| Frontend[Frontend / App Router]
-    Frontend -->|JWT Auth| Supabase[Supabase Identity]
+    Frontend -->|Edge Auth| Supabase[Supabase Identity]
     
-    subgraph "Detectra Intelligence Layer"
-        Frontend -->|Analyze Request| Backend[FastAPI Backend]
-        Backend -->|Quantitative Analysis| RFModel[Random Forest ML]
-        Backend -->|Qualitative Reasoning| Sarvam[Sarvam AI 30B]
+    subgraph "Detectra Intelligence Fabric"
+        Frontend -->|GRPC/REST| Backend[FastAPI Intelligence Engine]
+        Backend -->|Quantitative Model| RFModel[Random Forest ML]
+        Backend -->|Qualitative reasoning| Sarvam[Sarvam AI 30B]
     end
     
-    RFModel -->|Risk Score| Backend
-    Sarvam -->|Investigation logic| Backend
+    RFModel -->|Risk Score & Probability| Backend
+    Sarvam -->|Investigation logic & Verdict| Backend
     Backend -->|Consolidated Intelligence| Frontend
 ```
 
