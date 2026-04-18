@@ -37,6 +37,9 @@ export default function SubmitClaimPage() {
   const [isThinking, setIsThinking] = useState(false);
   const conversationHistory = useRef<{ role: string; content: string }[]>([]);
 
+  // Attached files
+  const [files, setFiles] = useState<{ name: string; size: string }[]>([]);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -76,6 +79,21 @@ export default function SubmitClaimPage() {
       station: "Andheri Branch",
     });
     setPoliceReport(true);
+    setFiles([
+      { name: "police_fir_copy.pdf", size: "2.4 MB" },
+      { name: "car_damage_photo_1.jpg", size: "4.1 MB" },
+      { name: "repair_estimate_invoice.pdf", size: "1.1 MB" }
+    ]);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files).map(file => ({
+        name: file.name,
+        size: (file.size / (1024 * 1024)).toFixed(1) + " MB"
+      }));
+      setFiles(prev => [...prev, ...newFiles]);
+    }
   };
 
   const handleAnalyze = async () => {
@@ -257,14 +275,35 @@ export default function SubmitClaimPage() {
               <h2 className="font-bold text-[0.9rem] mb-4 pb-3" style={{ color: "var(--foreground)", borderBottom: "1px solid var(--border)" }}>
                 Supporting Documents
               </h2>
-              <button
-                className="w-full border-dashed border-2 rounded-xl py-8 text-sm"
+              <label
+                className="w-full flex flex-col items-center justify-center border-dashed border-2 rounded-xl py-8 text-sm cursor-pointer hover:bg-[var(--accent)] transition-colors"
                 style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
               >
                 <FileText size={20} className="mx-auto mb-2" style={{ opacity: 0.5 }} />
-                Click to upload or drag and drop<br />
-                <span className="text-xs">PDF, JPG, PNG up to 10MB per file</span>
-              </button>
+                <span>Click to upload or drag and drop</span>
+                <span className="text-xs mt-1">PDF, JPG, PNG up to 10MB per file</span>
+                <input 
+                  type="file" 
+                  multiple 
+                  className="hidden" 
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileUpload} 
+                />
+              </label>
+
+              {files.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {files.map((file, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-lg border bg-[var(--background)]" style={{ borderColor: "var(--border)" }}>
+                      <div className="flex items-center gap-3">
+                        <FileText size={16} className="text-emerald-500" />
+                        <span className="text-sm font-medium text-[var(--foreground)]">{file.name}</span>
+                      </div>
+                      <span className="text-xs text-[var(--muted-foreground)]">{file.size}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button

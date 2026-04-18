@@ -8,10 +8,10 @@ import {
   Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 import {
-  FileText, AlertTriangle, Activity, TrendingUp,
-  ArrowUpRight, ArrowDownRight, Download, Plus,
-  Search, ChevronDown, CheckCircle2, Clock4,
-  MoreHorizontal, Eye, SlidersHorizontal, ShieldCheck, Volume2, X
+  Search, Bell, FileText, ArrowUpRight, ArrowDownRight,
+  ShieldAlert, ShieldCheck, Activity, Users, Settings, LogOut,
+  ChevronRight, BrainCircuit, ActivitySquare, AlertTriangle, CheckCircle2,
+  Menu, X, Loader2, TrendingUp, Clock4, Plus, Volume2, Eye
 } from "lucide-react";
 import { useChat } from "@/components/providers/ChatProvider";
 import { ShiningText } from "@/components/ui/shining-text";
@@ -54,7 +54,7 @@ export default function DashboardPage() {
   // Store the active scored claim from the ML pipeline
   const activeClaim = useRef<ScoreResponse | null>(null);
 
-  const [selectedClaim, setSelectedClaim] = useState(mockClaims[0]);
+  const [selectedClaim, setSelectedClaim] = useState<typeof mockClaims[0]>(mockClaims[0]);
   const [activeAnalysis, setActiveAnalysis] = useState<{
     risk_score: number;
     signals: string[];
@@ -66,10 +66,12 @@ export default function DashboardPage() {
     explanation: "Selection detailed analysis pending...",
     isAnalyzing: false
   });
+  
+  const [useVoiceAI, setUseVoiceAI] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const [role, setRole] = useState<string>("customer");
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [useVoiceAI, setUseVoiceAI] = useState(true);
 
   const [claims, setClaims] = useState<any[]>([]);
 
@@ -130,7 +132,7 @@ export default function DashboardPage() {
   const isInternal = role === "company_admin" || role === "employee_admin";
 
   const analyzeClaim = async (claim: typeof mockClaims[0]) => {
-    setActiveAnalysis(prev => ({ ...prev, isAnalyzing: true }));
+    setActiveAnalysis(prev => ({ ...prev, isAnalyzing: true } as any));
     try {
       // Use the new structured API for analysis
       const data = await api.analyzeClaim({
@@ -149,13 +151,28 @@ export default function DashboardPage() {
       });
     } catch (e) {
       console.error("Analysis failed", e);
-      setActiveAnalysis(prev => ({ ...prev, isAnalyzing: false }));
+      setActiveAnalysis(prev => ({ ...prev, isAnalyzing: false } as any));
     }
   };
 
   const handleClaimSelect = (claim: typeof mockClaims[0]) => {
     setSelectedClaim(claim);
     analyzeClaim(claim);
+  };
+
+  const handleGenerateReport = () => {
+    setIsExporting(true);
+    setTimeout(() => {
+      setIsExporting(false);
+      // Simulate file download
+      const element = document.createElement("a");
+      const file = new Blob(["Claim ID,Type,Amount,Status,Risk Score,Date\nCLM-7842,Auto Accident,₹45000,Under Investigation,78,2023-11-20"], {type: 'text/csv'});
+      element.href = URL.createObjectURL(file);
+      element.download = "detectra_claims_report.csv";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }, 2000);
   };
 
   const playAudio = async (text: string) => {
@@ -407,8 +424,14 @@ export default function DashboardPage() {
               </button>
             </div>
           )}
-          <button className="flex items-center gap-2 rounded-xl border px-4 py-2 text-[0.8rem] font-semibold hover:bg-[var(--accent)]" style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
-            <FileText size={14} /> Generate Report
+          <button 
+            className="flex items-center gap-2 rounded-xl border px-4 py-2 text-[0.8rem] font-semibold hover:bg-[var(--accent)] transition-all disabled:opacity-50" 
+            style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
+            onClick={handleGenerateReport}
+            disabled={isExporting}
+          >
+            {isExporting ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+            {isExporting ? "Generating..." : "Generate Report"}
           </button>
           <div className="ml-2 flex items-center gap-2 rounded-xl border px-3 py-2" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
             <Search size={13} style={{ color: "var(--muted-foreground)" }} />

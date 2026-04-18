@@ -1,72 +1,123 @@
 <div align="center">
 
-# Detectra | Enterprise Fraud Intelligence
-**Elite sub-second AI engine for insurance investigation units.**
+# 🛡️ Detectra
+### **Enterprise-Grade Fraud Intelligence & AI-Powered Investigation Unit**
 
-[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org/)
+[![Next.js 14](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Sarvam AI](https://img.shields.io/badge/AI-Sarvam%20AI-FFCA28?logo=google-cloud)](https://www.sarvam.ai/)
 [![Supabase](https://img.shields.io/badge/Database-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Framer Motion](https://img.shields.io/badge/Animations-Framer%20Motion-FF0055?logo=framer)](https://www.framer.com/motion/)
+
+**Detectra** is a high-performance fraud detection platform designed for modern insurance investigation units (SIU). By combining traditional Machine Learning with state-of-the-art Generative AI, Detectra provides sub-second risk assessment and actionable intelligence to thwart fraudulent activities.
 
 </div>
 
 ---
 
-## 🏗️ Technical Architecture
-Detectra is designed for high-throughput fraud detection, utilizing a modern decoupled stack.
+## 📽️ Deep Dive: The Fraud Intelligence Stack
+
+Detectra operates as a hybrid engine—leveraging a local **Random Forest** model for quantitative risk scoring and **Sarvam AI's 30B LLM** for qualitative analysis and investigative guidance.
+
+### **Core Capabilities**
+
+- **⚡ Real-time Fraud Scoring**: Instantly evaluate claim risk based on historical patterns, policy age, and frequency spikes.
+- **🤖 AI Investigator**: An integrated chatbot powered by Sarvam AI that provides specific investigative steps for complex fraud patterns.
+- **📊 Executive Dashboard**: A premium, minimalist interface for monitoring high-risk claims, approval rates, and global fraud trends.
+- **🌍 Multi-lingual Support**: Native integration with Sarvam's Bulbul V3 for professional summaries and multi-modal support.
+- **🔒 Enterprise Security**: Secure authentication and identity management powered by Supabase.
+
+---
+
+## 🏗️ System Architecture
+
+Detectra uses a decoupled architecture to ensure maximum throughput and scalability.
 
 ```mermaid
-graph LR
-    User([Investigation Team]) --> Frontend[Next.js 14]
-    Frontend --> Auth[Supabase Auth]
-    Frontend --> Backend[FastAPI / Sarvam AI]
-    Backend --> AI[Sarvam 30B LLM]
-    AI --> DB[(PostgreSQL / Supabase)]
+graph TD
+    User([Investigation Unit]) -->|Next.js 14 UI| Frontend[Frontend / App Router]
+    Frontend -->|JWT Auth| Supabase[Supabase Identity]
+    
+    subgraph "Detectra Intelligence Layer"
+        Frontend -->|Analyze Request| Backend[FastAPI Backend]
+        Backend -->|Quantitative Analysis| RFModel[Random Forest ML]
+        Backend -->|Qualitative Reasoning| Sarvam[Sarvam AI 30B]
+    end
+    
+    RFModel -->|Risk Score| Backend
+    Sarvam -->|Investigation logic| Backend
+    Backend -->|Consolidated Intelligence| Frontend
 ```
 
-### 📁 Streamlined Repository Structure
+---
+
+## 📁 Repository Structure
+
 ```bash
 ├── frontend/           # Next.js 14 Dashboard & Landing
-│   ├── src/app/        # SSR Routes & Interface
-│   └── src/components/ # Modular UI Components
-├── backend/            # Python FastAPI Service (Sarvam AI)
-│   ├── main.py         # AI Logic & TTS Processing
-│   └── requirements.txt# Backend Dependencies
-└── .env.example        # Centralized Config Manifest
+│   ├── src/app/        # Modern App Router architecture
+│   ├── src/components/ # Premium UI components (Framer Motion)
+│   └── src/data/       # Mock datasets for dashboard simulation
+├── backend/            # Python FastAPI Intelligence Service
+│   ├── main.py         # AI Logic & ML Inference Pipeline
+│   ├── models/         # Pre-trained Scikit-Learn artifacts
+│   └── requirements.txt# Enterprise-grade dependencies
+└── .env.example        # Centralized configuration manifest
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Deployment Guide
 
-### Prerequisites
-- **Node.js**: 18.0+
-- **Python**: 3.9+
-- **PIP**: Latest
+### **1. Prerequisites**
+- **Node.js**: 18.0 or higher
+- **Python**: 3.9+ 
+- **Supabase Account**: For authentication and persistence.
+- **Sarvam AI API Key**: For LLM-powered investigative logic.
 
-### Deployment
-1. **Clone & Setup**
-   ```bash
-   git clone https://github.com/pranavgawaii/Detectra.git
-   cd Detectra
-   npm run install:all
-   ```
+### **2. Installation**
 
-2. **Environment**
-   - Copy root `.env.example` values to `frontend/.env.local` and `sarvam_api/.env`.
+```bash
+# Clone the repository
+git clone https://github.com/pranavgawaii/Detectra.git
+cd Detectra
 
-3. **Launch**
-   ```bash
-   npm run dev
-   ```
+# Install Frontend dependencies
+cd frontend && npm install
+
+# Install Backend dependencies
+cd ../backend && pip install -r requirements.txt
+```
+
+### **3. Configuration**
+Rename `.env.example` to `.env` in the root and provide your credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+SARVAM_API_KEY=your_sarvam_key
+```
+
+### **4. Launching the Local Stack**
+You can launch both services simultaneously using the root package runner:
+```bash
+# From the root directory
+npm run dev
+```
 
 ---
 
-## 🔒 Security & Analytics
-- **Identity**: Supabase Auth with OAuth 2.0 integration.
-- **Privacy**: End-to-end encrypted claim analysis.
-- **Analytics**: Real-time fraud scoring powered by Sarvam AI Bulbul V3.
+## 🛠️ Tech Stack & Credits
+
+- **Frontend**: [Next.js 14](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [Framer Motion](https://framer.com/motion)
+- **Backend**: [FastAPI](https://fastapi.tiangolo.com/), [Scikit-Learn](https://scikit-learn.org/), [Joblib](https://joblib.readthedocs.io/)
+- **AI Engine**: [Sarvam AI (30B Model)](https://www.sarvam.ai/)
+- **Data Layer**: [Supabase / PostgreSQL](https://supabase.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
 ---
+
 <div align="center">
-  <strong>Built for the future of insurance. | © 2026 Detectra Technologies</strong>
+  <strong>Forging the future of insurance security.</strong><br>
+  Built with ❤️ by the Detectra Team | © 2026
 </div>
