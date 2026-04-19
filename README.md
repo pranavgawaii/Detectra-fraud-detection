@@ -34,6 +34,9 @@ Detectra operates as a hybrid engine—leveraging a local **Random Forest** mode
 
 Detectra is engineered on a **High-Efficiency Distributed Intelligence Fabric**, designed to handle high-concurrency fraud analysis with ultra-low latency. The system employs a multi-layered orchestration pattern to synthesize quantitative Machine Learning outputs with sophisticated Generative AI reasoning.
 
+![System Architecture](./frontend/public/assets/system%20architechture.png)
+
+
 ### **Architectural Pillars**
 
 - **⚡ Intelligence Orchestration**: A specialized FastAPI-driven core that multiplexes between local Scikit-Learn models for rapid quantitative scoring and **Sarvam AI's 30B LLM** for deep qualitative investigation.
