@@ -1,7 +1,7 @@
 <div align="center">
 
 # 🛡️ Detectra
-### **Enterprise-Grade Fraud Intelligence & AI-Powered Investigation Unit**
+### **Enterprise Grade Fraud Intelligence & AI-Powered Investigation Unit**
 
 [![Next.js 14](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
